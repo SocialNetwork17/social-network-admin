@@ -1,6 +1,6 @@
 import { memo, MouseEventHandler } from 'react'
 import styles from './IconButton.module.scss'
-import { Icon } from '@/shared/ui/Icon/Icon'
+import { Icon } from '../Icon/Icon'
 
 type Props = {
   iconId: string | null

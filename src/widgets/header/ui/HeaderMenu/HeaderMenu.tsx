@@ -1,10 +1,10 @@
 import React from 'react'
 import styles from './HeaderMenu.module.scss'
-import { BaseOption, SelectBox } from '@/shared/ul/Select-box/SelectBox'
-import { IconButton } from '@/shared/ui/IconButton/IconButton'
-import { Button } from '@/shared/ui/Button/Button'
 import Link from 'next/link'
 import { PATH } from '@/shared/constants/routings'
+import { BaseOption, SelectBox } from '@/shared/ul/Select-box/SelectBox'
+import { IconButton } from '@/shared/ul/IconButton/IconButton'
+import { Button } from '@/shared/ul/Button/Button'
 
 type HeaderMenu = {
   isLoggedIn: boolean

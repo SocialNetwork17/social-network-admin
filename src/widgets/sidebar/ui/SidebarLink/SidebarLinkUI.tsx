@@ -1,5 +1,5 @@
+import { Icon } from '@/shared/ul/Icon/Icon'
 import s from '@/widgets/Sidebar/ui/Sidebar.module.scss'
-import { Icon } from '@/shared/ui/Icon/Icon'
 import React from 'react'
 
 interface SidebarLinkUIProps {

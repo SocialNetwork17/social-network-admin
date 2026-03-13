@@ -14,8 +14,7 @@
     "graphql": "^16.13.1",
     "next": "16.1.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "sass": "^1.98.0"
+    "react-dom": "19.2.3"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -24,6 +23,7 @@
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "sass": "^1.98.0",
     "typescript": "^5"
   }
 }

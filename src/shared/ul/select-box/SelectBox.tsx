@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import s from './Select.module.scss'
-import { Icon } from '@/shared/ui/Icon/Icon'
 import * as flags from 'country-flag-icons/react/3x2'
+import { Icon } from '../Icon/Icon'
 
 export type BaseOption = {
     id: string

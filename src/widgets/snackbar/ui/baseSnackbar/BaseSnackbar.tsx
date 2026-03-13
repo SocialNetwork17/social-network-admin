@@ -1,7 +1,7 @@
 'use client'
 
+import { IconButton } from '@/shared/ul/IconButton/IconButton';
 import styles from './BaseSnackbar.module.scss'
-import {IconButton} from "@/shared/ui/IconButton/IconButton";
 import {
     ErrorSnackbarType,
     SuccessSnackbarType,

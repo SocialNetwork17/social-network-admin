@@ -1,6 +1,6 @@
 export default function Home() {
 
     return (
-        <div> Base page</div>
+        <div> Statictics</div>
     )
 }

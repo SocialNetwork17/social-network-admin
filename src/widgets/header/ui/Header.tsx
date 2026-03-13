@@ -15,7 +15,7 @@ export const Header = () => {
     <header className={styles.header}>
       <div className={styles.container}>
         <div className={styles.headerWrapper}>
-          <h1 className={styles.logo}>Inctagram</h1>
+          <h1 className={styles.logo}>Unitygram<span>SuperAdmin</span></h1>
 
 
           <HeaderMenu
