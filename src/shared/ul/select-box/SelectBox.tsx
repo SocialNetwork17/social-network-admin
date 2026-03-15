@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useEffect, useRef, useState } from 'react'
 import s from './Select.module.scss'
 import * as flags from 'country-flag-icons/react/3x2'
