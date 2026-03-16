@@ -49,25 +49,3 @@ background-color: #171717;
   color: red;
   font-size: 14px;
 }
-
-.button {
-  text-align: center;
-  padding: 10px;
-  background-color: #0070f3;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 16px;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 36px;
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-
-  &:hover:not(:disabled) {
-    background-color: #005fd4;
-  }
-}

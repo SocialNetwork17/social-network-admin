@@ -13,6 +13,7 @@
   "dependencies": {
     "@apollo/client": "^4.1.6",
     "@graphql-typed-document-node/core": "^3.2.0",
+    "country-flag-icons": "^1.6.15",
     "graphql": "^16.13.1",
     "graphql-tag": "^2.12.6",
     "next": "16.1.6",
@@ -26,13 +27,13 @@
     "@graphql-codegen/typescript": "^4.0.0",
     "@graphql-codegen/typescript-operations": "^4.0.0",
     "@graphql-codegen/typescript-react-apollo": "^4.0.0",
-    "ts-node": "^10.9.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "ts-node": "^10.9.1",
     "typescript": "^5"
   }
 }

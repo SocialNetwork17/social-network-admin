@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { SIGN_IN_MUTATION } from '../api/signIn.mutation';
 import type { SignInMutation, SignInMutationVariables } from '../api/signIn.mutation.generated';
 import s from './SignInForm.module.scss';
+import {Button} from "@/shared/ul/Button/Button";
+import {Input} from "@/shared/ul/Input/Input";
 
 export const SignInForm = () => {
   const router = useRouter();
@@ -16,7 +18,7 @@ export const SignInForm = () => {
   const [signIn, { loading }] = useMutation<SignInMutation, SignInMutationVariables>(SIGN_IN_MUTATION, {
     onCompleted: (data) => {
       if (data.loginAdmin.logged) {
-        router.push('/users');
+        router.push('/admin/users');
       } else {
         setErrorMessage('Invalid credentials');
       }
@@ -38,19 +40,22 @@ export const SignInForm = () => {
 
         <div className={s.field}>
           <label htmlFor="email">Email</label>
-          <input
-              id="email"
-              type="email"
-              value={email}
-              placeholder={"Epam@epam.com"}
-              onChange={(e) => setEmail(e.target.value)}
-              required
+
+          <Input
+          id="email"
+          type="email"
+          value={email}
+          placeholder={"Epam@epam.com"}
+          onChange={(e) => setEmail(e.target.value)}
+          required
           />
+
         </div>
 
         <div className={s.field}>
           <label htmlFor="password">Password</label>
-          <input
+
+          <Input
               id="password"
               type="password"
               placeholder={"******************"}
@@ -62,10 +67,11 @@ export const SignInForm = () => {
 
 
         {errorMessage && <p className={s.error}>{errorMessage}</p>}
-
-        <button className={s.button} type="submit" disabled={loading}>
-          {loading ? 'Signing in...' : 'Sign In'}
-        </button>
+          
+          <Button variant={'primary'} type="submit" disabled={loading}>
+              {loading ? 'Signing in...' : 'Sign In'}
+          </Button>
+          
       </form>
   );
 };
