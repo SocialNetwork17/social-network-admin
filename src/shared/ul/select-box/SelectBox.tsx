@@ -95,7 +95,7 @@ export const SelectBox = <T extends BaseOption>({
                     onMouseLeave={() => setIsHovered(false)}
                     onClick={() => !disabled && setIsOpen(!isOpen)}
                 >
-                    <span className={s.selectValue}>
+                    <div className={s.selectValue}>
                         {selectedOption ? (
                             <>
                                 {getFlagComponent(selectedOption.countryCode)}
@@ -104,7 +104,7 @@ export const SelectBox = <T extends BaseOption>({
                         ) : (
                             placeholder
                         )}
-                    </span>
+                    </div>
                     <div className={s.selectArrow + ' ' + classArrow} style={styleArrow}>
                         <Icon iconId={'arrow-down'} size={24} />
                     </div>

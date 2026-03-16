@@ -5,6 +5,7 @@ import Pagination from "@/shared/ul/Pagination/Pagination";
 import {Icon} from "@/shared/ul/Icon/Icon";
 import {SearchInput} from "@/shared/ul/SearchInput/SearchInput";
 import {BaseOption, SelectBox} from "@/shared/ul/select-box/SelectBox";
+import { ThreeDotsMenu } from './ThreeDotsMenu/ThreeDotsMenu';
 
 type User = {
     isBaned: boolean,
@@ -129,7 +130,9 @@ export const UsersList = () => {
     return (
         <div className={styles.container}>
             <div className={styles.userTop}>
-                <SearchInput placeholder={"Search"}/>
+                <SearchInput
+                    placeholder={"Search"}
+                />
                 <SelectBox
                     placeholder={"Not selected"}
                     options={optionsOfBan}
@@ -156,7 +159,9 @@ export const UsersList = () => {
                         <div className={styles.profileLink}>{user.profileLink}</div>
                         <div className={styles.username}>{user.Username}</div>
                         <div className={styles.dateAdded}>{user.dateAdded}</div>
-                        <div className={styles.threeDotsArea}>...</div>
+                        <div className={styles.threeDotsArea}>
+                            <ThreeDotsMenu postId={123} />
+                        </div>
                     </li>
                 ))}
             </ul>
