@@ -5,28 +5,29 @@ import s from './DropdownMenu.module.scss'
 import {Icon} from "@/shared/ul/Icon/Icon";
 
 type DropdownMenuProps = {
-    onEdit: () => void
-    onDelete: () => void
+    onDeleteUser: () => void
+    onBanUser: () => void
+    onMoreInfo: () => void
 }
 
-export const DropdownMenu = ({ onEdit, onDelete }: DropdownMenuProps) => {
+export const DropdownMenu = ({ onDeleteUser, onBanUser, onMoreInfo }: DropdownMenuProps) => {
     return (
         <div className={s.dropdownMenu}>
-            <button onClick={onEdit} className={s.dropdownItem}>
+            <button onClick={onDeleteUser} className={s.dropdownItem}>
                 <span className={s.dropdownIcon}>
-                  <Icon iconId="edit" size={24}/>
+                  <Icon iconId="icon-delete-user" size={24}/>
                 </span>
                 <span className={s.dropdownText}>Delete User</span>
             </button>
-            <button onClick={onDelete} className={`${s.dropdownItem} ${s.deleteItem}`} >
+            <button onClick={onBanUser} className={`${s.dropdownItem} ${s.deleteItem}`} >
                 <span className={s.dropdownIcon}>
-                  <Icon iconId="delete" size={24}/>
+                  <Icon iconId="icon-cancel" size={24}/>
                 </span>
                 <span className={s.dropdownText}>Ban in the system</span>
             </button>
-            <button onClick={onDelete} className={`${s.dropdownItem} ${s.deleteItem}`} >
+            <button onClick={onMoreInfo} className={`${s.dropdownItem} ${s.deleteItem}`} >
                 <span className={s.dropdownIcon}>
-                  <Icon iconId="delete" size={24}/>
+                  <Icon iconId="threeDots" size={24}/>
                 </span>
                 <span className={s.dropdownText}>More Information</span>
             </button>
