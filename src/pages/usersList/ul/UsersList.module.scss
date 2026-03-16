@@ -66,6 +66,9 @@
   align-self: flex-end;
   display: flex;
   justify-content: flex-end;
+  & > * {
+    margin: -5px 0;
+  }
 }
 
 .userListPagination {

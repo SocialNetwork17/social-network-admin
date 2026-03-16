@@ -26,13 +26,22 @@ export const ThreeDotsMenu = ({ postId }: ThreeDotsMenuProps) => {
         setIsMenuOpen(!isMenuOpen)
     }
 
-    const handleEdit = () => {
+    const handleBanUser = () => {
         setIsMenuOpen(false)
         // popModal() // закрываем VIEW_POST
         // pushModal(openEditPostModalAC({postId}))
     }
 
-    const handleDeleteClick = () => {
+    const handleDeleteUser = () => {
+        setIsMenuOpen(false)
+        // pushModal(deletePostModalAC({
+        //     title: 'Delete Post',
+        //     description: 'Are you sure you want to delete this post?',
+        //     postId: postId
+        // }))
+    }
+
+    const handleMoreInfo = () => {
         setIsMenuOpen(false)
         // pushModal(deletePostModalAC({
         //     title: 'Delete Post',
@@ -54,8 +63,9 @@ export const ThreeDotsMenu = ({ postId }: ThreeDotsMenuProps) => {
 
             {isMenuOpen && (
                 <DropdownMenu
-                    onEdit={handleEdit}
-                    onDelete={handleDeleteClick}
+                    onBanUser={handleBanUser}
+                    onDeleteUser={handleDeleteUser}
+                    onMoreInfo={handleMoreInfo}
                 />
             )}
         </div>
