@@ -4,12 +4,13 @@
   @include abstract.container;
   display: flex;
   height: 100vh;
+
+  padding: 0 60px;
 }
 
 .main {
   height: 100%;
   width: 100%;
-  display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
