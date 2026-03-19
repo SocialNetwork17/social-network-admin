@@ -8,6 +8,8 @@ import {
   GetAllPostsQuery,
   GetAllPostsQueryVariables,
 } from "../api/postsAll.mutation.generated";
+import { GET_USER } from "@/pages/postsList/api/users";
+import {GetUserQuery, GetUserQueryVariables} from "../api/users.generated";
 import { useEffect, useState } from "react";
 
 // export const PostList = () => {
@@ -56,23 +58,27 @@ import { useEffect, useState } from "react";
 
 export const PostList = () => {
   console.log('PostList rendering');
+
+  const { data, loading, error } = useQuery(GET_USER, {
+    variables: { userId: 404 },
+  })
   
-  const { data, loading, error } = useQuery<
-    GetAllPostsQuery,
-    GetAllPostsQueryVariables
-  >(POSTS_ALL_QUERY, {
-    notifyOnNetworkStatusChange: true,
-    onError: (error) => {
-      console.error("Query error details:", {
-        message: error.message,
-        graphQLErrors: error.graphQLErrors,
-        networkError: error.networkError,
-      });
-    },
-    onCompleted: (data) => {
-      console.log("Query completed:", data);
-    },
-  });
+  // const { data, loading, error } = useQuery<
+  //   GetAllPostsQuery,
+  //   GetAllPostsQueryVariables
+  // >(POSTS_ALL_QUERY, {
+  //   notifyOnNetworkStatusChange: true,
+  //   onError: (error) => {
+  //     console.error("Query error details:", {
+  //       message: error.message,
+  //       graphQLErrors: error.graphQLErrors,
+  //       networkError: error.networkError,
+  //     });
+  //   },
+  //   onCompleted: (data) => {
+  //     console.log("Query completed:", data);
+  //   },
+  // });
 
   console.log('Query state:', { loading, error, data });
 
@@ -89,7 +95,8 @@ export const PostList = () => {
 
   return (
     <div className={styles.container}>
-      <p>Total posts: {data?.getPosts?.totalCount}</p>
+      {/*<p>Total posts: {data?.getPosts?.totalCount}</p>*/}
+      <p>{data?.getUser?.userName}</p>
     </div>
   );
 };
