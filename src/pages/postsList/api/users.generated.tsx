@@ -1,4 +1,4 @@
-import * as Types from '../types';
+import * as Types from '../../../types';
 
 export type GetUserQueryVariables = Types.Exact<{
   userId: Types.Scalars['Int']['input'];
