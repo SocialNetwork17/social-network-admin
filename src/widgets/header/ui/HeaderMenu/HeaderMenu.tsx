@@ -1,10 +1,7 @@
 import React from 'react'
 import styles from './HeaderMenu.module.scss'
-import Link from 'next/link'
-import { PATH } from '@/shared/constants/routings'
-import { BaseOption, SelectBox } from '@/shared/ul/Select-box/SelectBox'
+import { BaseOption, SelectBox } from '@/shared/ul/select-box/SelectBox'
 import { IconButton } from '@/shared/ul/IconButton/IconButton'
-import { Button } from '@/shared/ul/Button/Button'
 
 type HeaderMenu = {
   isLoggedIn: boolean
@@ -27,45 +24,23 @@ export const HeaderMenu = (props: HeaderMenu) => {
 
   return (
     <div className={`${styles.menuBox}`}>
-      {isLoggedIn ? (
-        <>
-          <div className={styles.iconBox}>
-            <IconButton
-              onClick={onClickHandler}
-              iconId={'messageBell'}
-              size={20}
-              viewBox={'0 0 18 20'}
-              fill={'white'}
-            />
-            {!!countMessage && <p className={styles.counterMessage}>{countMessage}</p>}
-          </div>
-          <SelectBox
-            options={languages}
-            onChange={handleSelect}
-            defaultValue={languages[1]} // GB will be pre-selected
+      {isLoggedIn && (
+        <div className={styles.iconBox}>
+          <IconButton
+            onClick={onClickHandler}
+            iconId={'messageBell'}
+            size={20}
+            viewBox={'0 0 18 20'}
+            fill={'white'}
           />
-        </>
-      ) : (
-        <>
-          <SelectBox
-            options={languages}
-            onChange={handleSelect}
-            defaultValue={languages[1]} // GB will be pre-selected
-          />
-          <div className={`${styles.buttonsBox}`}>
-            <Link href={PATH.SIGN_IN}>
-              <Button variant={'textButton'} disabled={false} width={100} height={36}>
-                Log in
-              </Button>
-            </Link>
-            <Link href={PATH.SIGN_UP}>
-              <Button variant={'primary'} disabled={false} width={100} height={36}>
-                Sign up
-              </Button>
-            </Link>
-          </div>
-        </>
+          {!!countMessage && <p className={styles.counterMessage}>{countMessage}</p>}
+        </div>
       )}
+      <SelectBox
+        options={languages}
+        onChange={handleSelect}
+        defaultValue={languages[1]}
+      />
     </div>
   )
 }
