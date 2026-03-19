@@ -1,6 +1,9 @@
-export default function Home() {
+import { PostList } from "@/pages/postsList/ui/PostList";
 
-    return (
-        <div> Posts List</div>
-    )
+export default function Home() {
+  return (
+    <div>
+      <PostList />
+    </div>
+  );
 }
