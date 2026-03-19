@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import s from './Pagination.module.scss'
-import { Icon } from '@/shared/ui/Icon/Icon'
-import SelectBox from '@/shared/ui/Select-box/SelectBox'
+import { Icon } from '@/shared/ul/Icon/Icon'
+import {SelectBox} from "@/shared/ul/Select-box/SelectBox";
+
 // import {Option} from "commander";
 
 export type Option = {

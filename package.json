@@ -13,6 +13,7 @@
   "dependencies": {
     "@apollo/client": "^4.1.6",
     "@graphql-typed-document-node/core": "^3.2.0",
+    "@storybook/nextjs-vite": "^10.2.19",
     "country-flag-icons": "^1.6.15",
     "graphql": "^16.13.1",
     "graphql-tag": "^2.12.6",
