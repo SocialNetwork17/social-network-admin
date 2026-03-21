@@ -14,9 +14,9 @@ const config: CodegenConfig = {
                 extension: '.generated.tsx',
                 baseTypesPath: 'types.ts',
             },
-            plugins: ['typescript-operations', 'typescript-react-apollo'],
+            plugins: ['typescript-operations'],
             config: {
-                withHooks: true,
+                withHooks: true
             }
         },
     },

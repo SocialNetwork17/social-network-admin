@@ -1,13 +1,14 @@
 import { gql } from '@apollo/client';
 
+// Используем обычный gql тег, типы будут подхвачены отдельно
 export const GET_USERS = gql`
-    query GetUsers(        
+    query GetUsers(
         $pageNumber: Int
         $pageSize: Int
         $sortBy: String
-        $sortDirection: SortDirection    
+        $sortDirection: SortDirection
         $searchTerm: String
-        $statusFilter: UserBlockStatus  
+        $statusFilter: UserBlockStatus
     ) {
         getUsers(
             pageNumber: $pageNumber
