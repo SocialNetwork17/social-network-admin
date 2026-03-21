@@ -1,13 +1,16 @@
 import { gql } from '@apollo/client';
+// Импортируем типы из client-preset
+import type { GetUsersQuery, GetUsersQueryVariables } from '@/gql/graphql';
 
+// Используем обычный gql тег, типы будут подхвачены отдельно
 export const GET_USERS = gql`
-    query GetUsers(        
+    query GetUsers(
         $pageNumber: Int
         $pageSize: Int
         $sortBy: String
-        $sortDirection: SortDirection    
+        $sortDirection: SortDirection
         $searchTerm: String
-        $statusFilter: UserBlockStatus  
+        $statusFilter: UserBlockStatus
     ) {
         getUsers(
             pageNumber: $pageNumber
@@ -45,3 +48,6 @@ export const GET_USERS = gql`
         }
     }
 `;
+
+// Экспортируем типы для использования в компонентах
+export type { GetUsersQuery, GetUsersQueryVariables };
