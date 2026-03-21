@@ -1,5 +1,5 @@
 'use client'
-import React, { ChangeEvent, memo, useEffect, useState } from 'react'
+import React, { ChangeEvent, memo, useEffect, useState, KeyboardEvent } from 'react'
 import styles from './SearchInput.module.scss'
 import { IconButton } from '../IconButton/IconButton'
 
@@ -8,10 +8,11 @@ type Props = {
   error?: boolean
   errorText?: string
   disabled?: boolean
+  onSearch?: (value: number) => void
 }
 
 export const SearchInput = memo((props: Props) => {
-  const { placeholder, error, errorText, disabled } = props
+  const { placeholder, error, errorText, disabled, onSearch } = props
 
   const [value, setValue] = useState<string>('')
   const [hasError, setHasError] = useState(!!error)
@@ -21,8 +22,24 @@ export const SearchInput = memo((props: Props) => {
     error && setHasError(false)
   }
 
-  const onClickHandler = () => {}
-  const onKeyPressHandler = () => {}
+  const handleSearch = () => {
+    if (value.trim() && onSearch) {
+      const userId = parseInt(value.trim(), 10);
+      if (!isNaN(userId)) {
+        onSearch(userId);
+      }
+    }
+  }
+
+  const onKeyPressHandler = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleSearch();
+    }
+  }
+
+  const onClickHandler = () => {
+    handleSearch();
+  }
 
   useEffect(() => {
     setHasError(!!error)
