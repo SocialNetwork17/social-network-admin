@@ -1,5 +1,5 @@
 'use client'
-import React, { ChangeEvent, memo, useEffect, useState, KeyboardEvent } from 'react'
+import React, { ChangeEvent, useEffect, useState, KeyboardEvent } from 'react'
 import styles from './SearchInput.module.scss'
 import { IconButton } from '../IconButton/IconButton'
 
