@@ -1,6 +1,10 @@
 @use '../../../styles/abstract' as styles;
 @use '../../../styles/base/typography' as typo;
 
+.container {
+  width: 100%;
+}
+
 .userTop {
   display: flex;
   justify-content: space-between;
