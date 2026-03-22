@@ -18,7 +18,7 @@ export const PostList = () => {
     GetAllPostsQueryVariables
   >(POSTS_ALL_QUERY, {
     notifyOnNetworkStatusChange: true,
-    onCompleted: (data) => {
+    onCompleted: (data: GetAllPostsQuery) => {
       console.log("Query completed:", data);
       console.log("Network status:", networkStatus);
     },
@@ -27,7 +27,7 @@ export const PostList = () => {
     },
   });
 
-  const posts = data?.getPosts?.items;
+  const posts = (data as GetAllPostsQuery)?.getPosts?.items;
 
   if (loading) return <div>Loading posts...</div>;
   if (error) return <div>Error: {error.message}</div>;
