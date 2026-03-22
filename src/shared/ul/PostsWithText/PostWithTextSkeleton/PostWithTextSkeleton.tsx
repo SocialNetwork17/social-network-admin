@@ -1,4 +1,4 @@
-import {Skeleton} from '@/shared/ui/Skeleton/Skeleton'
+import { Skeleton } from '../../Skeleton/Skeleton'
 import styles from './PostWithTextSkeleton.module.scss'
 
 export const PostWithTextSkeleton = () => {

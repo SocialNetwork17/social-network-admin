@@ -9,4 +9,4 @@ export type GetAllPostsQueryVariables = Types.Exact<{
 }>;
 
 
-export type GetAllPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'PostsPaginationModel', pagesCount: number, pageSize: number, totalCount: number } };
+export type GetAllPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'PostsPaginationModel', pagesCount: number, pageSize: number, totalCount: number, items: Array<{ __typename?: 'Post', description: string, createdAt: any, images?: Array<{ __typename?: 'ImagePost', url?: string | null }> | null, postOwner: { __typename?: 'PostOwnerModel', userName: string, avatars?: Array<{ __typename?: 'Avatar', url?: string | null }> | null } }> } };
