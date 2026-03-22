@@ -5,15 +5,17 @@ import s from './ThreeDotsMenu.module.scss'
 import {IconButton} from "@/shared/ul/IconButton/IconButton";
 import {DropdownMenu} from "@/pages/usersList/ul/ThreeDotsMenu/DropdownMenu/DropdownMenu";
 import {useClickOutside} from "@/pages/usersList/ul/ThreeDotsMenu/DropdownMenu/useClickOutside";
+import {useModal} from "@/widgets/modal/model/modal.context";
+import { deleteUserModalAC} from "@/widgets/modal/model/modal.types";
 
 type ThreeDotsMenuProps = {
-    postId: number
+    userId: number
 }
 
-export const ThreeDotsMenu = ({ postId }: ThreeDotsMenuProps) => {
+export const ThreeDotsMenu = ({ userId }: ThreeDotsMenuProps) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-    // const {pushModal, popModal} = useModal()
+    const {pushModal, popModal} = useModal()
 
     // Закрытие меню при клике снаружи
     const menuRef = useRef<HTMLDivElement>(null)
@@ -28,26 +30,22 @@ export const ThreeDotsMenu = ({ postId }: ThreeDotsMenuProps) => {
 
     const handleBanUser = () => {
         setIsMenuOpen(false)
-        // popModal() // закрываем VIEW_POST
-        // pushModal(openEditPostModalAC({postId}))
+
     }
 
     const handleDeleteUser = () => {
         setIsMenuOpen(false)
-        // pushModal(deletePostModalAC({
-        //     title: 'Delete Post',
-        //     description: 'Are you sure you want to delete this post?',
-        //     postId: postId
-        // }))
+        console.log('delete')
+        pushModal(deleteUserModalAC({
+            title: 'Delete Post',
+            description: 'Are you sure you want to delete this post?',
+            userId: userId
+        }))
     }
 
     const handleMoreInfo = () => {
         setIsMenuOpen(false)
-        // pushModal(deletePostModalAC({
-        //     title: 'Delete Post',
-        //     description: 'Are you sure you want to delete this post?',
-        //     postId: postId
-        // }))
+
     }
 
     return (

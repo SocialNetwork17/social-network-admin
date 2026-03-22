@@ -2,6 +2,7 @@
 @use '../../../styles/base/typography' as typo;
 
 .container {
+  margin-top: 120px;
   width: 100%;
 }
 
@@ -27,7 +28,8 @@
 .userListElement {
   margin-top: 0;
   background: transparent;
-  border-bottom: 1px solid styles.palette('dark', 500);
+  border: 1px solid styles.palette('dark', 500);
+  border-top: none;
   @include typo.text-regular-14;
   column-gap: 5px;
 }
