@@ -13,7 +13,7 @@ export const PostsWithText = ({ posts }: Props) => {
   return (
     <>
       <div className={styles.container}>
-        {!posts.items && PostWithTextSkeleton}
+        {!posts && PostWithTextSkeleton}
         {posts.map(el => (
           <CardWithText post={el} key={el.id} />
         ))}

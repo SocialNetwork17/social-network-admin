@@ -12,12 +12,16 @@ type Props = {
 export const CardWithText = (props: Props) => {
   const { post, onClick } = props
 
-  const urls = post.images.map(image => image.url)
-  console.log(urls)
+  const urls = post.images 
+    ? post.images
+        .map(image => image.url)
+        .filter((url): url is string => Boolean(url))  // фильтруем null/undefined и сужаем тип
+    : []
+
   return (
     <div className={styles.container}>
       <div className={styles.card}>
-        <Card images={urls} slider={true} />
+        <Card images={urls} slider={true}/>
       </div>
       <UserName post={post} />
       <ExpandText post={post} />

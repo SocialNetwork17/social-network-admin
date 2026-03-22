@@ -8,46 +8,34 @@ import {
   GetAllPostsQuery,
   GetAllPostsQueryVariables,
 } from "../api/postsAll.mutation.generated";
+import { setErrorMessageHandler } from "@apollo/client/dev";
+import { PostWithTextSkeleton } from "@/shared/ul/PostsWithText/PostWithTextSkeleton/PostWithTextSkeleton";
 
 export const PostList = () => {
-  console.log('PostList rendering');
 
   const { data, loading, error, networkStatus } = useQuery<
     GetAllPostsQuery,
     GetAllPostsQueryVariables
   >(POSTS_ALL_QUERY, {
     notifyOnNetworkStatusChange: true,
-    onError: (error) => {
-      console.error("Query error details:", {
-        message: error.message,
-        graphQLErrors: error.graphQLErrors,
-        networkError: error.networkError,
-        clientErrors: error.clientErrors,
-      });
-    },
     onCompleted: (data) => {
       console.log("Query completed:", data);
       console.log("Network status:", networkStatus);
     },
+    onError: (error) => {
+      setErrorMessageHandler(error.message);
+    },
   });
 
-  console.log('Query state:', { loading, error, data, networkStatus });
+  const posts = data?.getPosts?.items;
 
-  // Добавляем обработку состояний загрузки и ошибок
   if (loading) return <div>Loading posts...</div>;
-  if (error) {
-    console.log('Full error object:', JSON.stringify(error, null, 2));
-    return (
-      <div>
-        <h3>Error loading posts</h3>
-        <p>Message: {error.message}</p>
-      </div>
-    );
-  }
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <div className={styles.container}>
-      <PostsWithText posts={data?.getPosts?.items} />
+      {(!posts || posts.length === 0) && <PostWithTextSkeleton />}
+      {posts && posts.length > 0 && <PostsWithText posts={posts} />}
     </div>
   );
 };

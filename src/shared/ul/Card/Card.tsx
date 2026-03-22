@@ -8,7 +8,7 @@ import Image from 'next/image'
 
 type Props = {
   images: string[] | string
-  alt: string
+  alt?: string
   slider?: boolean
   variant?: 'rectangle' | 'circular'
   width?: number
@@ -51,14 +51,14 @@ export const Card = (props: Props) => {
           onClick={onClick}
           className={`${styles.slide} ${index === currentIndex ? styles.active : ''}`}
         >
-          {/* <Image
+          <Image
             src={image}
             alt={`${alt} - ${index + 1} of ${imagesArray.length}`}
             fill={true}
             className={`${styles.image} ${variant === 'circular' ? styles.rounded : ''}`}
             sizes="(max-width: 768px) 100vw, 600px"
             priority={index === 0}
-          /> */}
+          />
         </div>
       ))}
 

@@ -1,36 +1,44 @@
 import { gql } from "@apollo/client";
 
 export const POSTS_ALL_QUERY = gql`
-query GetAllPosts(
-  $endCursorPostId: Int
-  $searchTerm: String
-  $pageSize: Int = 10
-  $sortBy: String = "createdAt"
-  $sortDirection: SortDirection = desc
-) {
-  getPosts(
-    endCursorPostId: $endCursorPostId
-    searchTerm: $searchTerm
-    pageSize: $pageSize
-    sortBy: $sortBy
-    sortDirection: $sortDirection
+  query GetAllPosts(
+    $endCursorPostId: Int
+    $searchTerm: String
+    $pageSize: Int = 8
+    $sortBy: String = "createdAt"
+    $sortDirection: SortDirection = desc
   ) {
-    pagesCount
-    pageSize
-    totalCount
-    items {
-      images{
-        url
-      }
-      description
-      createdAt
-      postOwner {
-        userName
-        avatars {
+    getPosts(
+      endCursorPostId: $endCursorPostId
+      searchTerm: $searchTerm
+      pageSize: $pageSize
+      sortBy: $sortBy
+      sortDirection: $sortDirection
+    ) {
+      pagesCount
+      pageSize
+      totalCount
+      items {
+        images {
           url
         }
+        id
+        ownerId
+        description
+        createdAt
+        updatedAt
+        postOwner {
+          id
+          userName
+          avatars {
+            url
+          }
+        }
+        userBan {
+          createdAt
+          reason
+        }
       }
+    }
   }
-  }
-}
 `;
