@@ -1,11 +1,11 @@
 'use client'
 import styles from './ExpandText.module.scss'
-import { SchemaPostViewModel } from '@/shared/api/schema'
 import { useEffect, useRef, useState } from 'react'
 import { getTimeAgo } from '@/shared/utils/getTimeAgo'
+import { Post } from '@/types'
 
 type Props = {
-  post: SchemaPostViewModel
+  post: Post
 }
 
 export const ExpandText = (props: Props) => {

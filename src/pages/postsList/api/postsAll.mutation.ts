@@ -4,7 +4,7 @@ export const POSTS_ALL_QUERY = gql`
   query GetAllPosts(
     $endCursorPostId: Int
     $searchTerm: String
-    $pageSize: Int = 10
+    $pageSize: Int = 8
     $sortBy: String = "createdAt"
     $sortDirection: SortDirection = desc
   ) {
@@ -18,6 +18,27 @@ export const POSTS_ALL_QUERY = gql`
       pagesCount
       pageSize
       totalCount
+      items {
+        images {
+          url
+        }
+        id
+        ownerId
+        description
+        createdAt
+        updatedAt
+        postOwner {
+          id
+          userName
+          avatars {
+            url
+          }
+        }
+        userBan {
+          createdAt
+          reason
+        }
+      }
     }
   }
 `;

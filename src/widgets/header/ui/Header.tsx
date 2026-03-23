@@ -6,7 +6,6 @@ import { HeaderMenu } from '@/widgets/header/ui/HeaderMenu/HeaderMenu'
 export const Header = () => {
   const [countNotices, setCountNotices] = useState<number>(0)
 
-
   const onClickHandler = () => {
     setCountNotices(countNotices + 1)
   }
@@ -16,8 +15,6 @@ export const Header = () => {
       <div className={styles.container}>
         <div className={styles.headerWrapper}>
           <h1 className={styles.logo}>Unitygram<span>SuperAdmin</span></h1>
-
-
           <HeaderMenu
             countMessage={countNotices}
             isLoggedIn={true}
