@@ -32,6 +32,7 @@ const LayoutContent = ({ children }: Props) => {
     )
 }
 
+
 export const RootLayoutClient = ({ children }: Props) => {
     return (
         <AuthProvider>
