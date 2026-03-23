@@ -1,0 +1,83 @@
+@use '../../../styles/abstract' as styles;
+@use '../../../styles/base/typography' as typo;
+
+.container {
+  margin-top: 120px;
+  width: 100%;
+}
+
+.userTop {
+  display: flex;
+  justify-content: space-between;
+  padding: 64px 0 24px 0;
+  & > :first-child {
+    max-width: 644px;
+  }
+  & > :last-child {
+    max-width: 234px;
+  }
+}
+
+.userListHeader, .userListElement {
+  display: flex;
+  column-gap: 5px;
+  background: styles.palette('dark', 500);
+  padding: 12px 24px;
+}
+
+.userListElement {
+  margin-top: 0;
+  background: transparent;
+  border: 1px solid styles.palette('dark', 500);
+  border-top: none;
+  @include typo.text-regular-14;
+  column-gap: 5px;
+}
+
+.userListHeader {
+  color: styles.palette('light', 100);
+  @include typo.h3;
+  font-size: 14px;
+}
+
+.userListBody {
+  margin-bottom: 36px;
+}
+
+.userID {
+  flex: 0 0 22%;
+  display: flex;
+  gap: 12px;
+}
+
+.userIsBaned {
+  height: 24px;
+  width: 24px;
+}
+
+.profileLink {
+  flex: 0 0 25%;
+}
+
+.username {
+  flex: 0 0 30%;
+}
+
+.dateAdded {
+  flex: 0 0 15%;
+}
+
+.threeDotsArea {
+  flex: 0 0 6%;
+  align-self: flex-end;
+  display: flex;
+  justify-content: flex-end;
+  & > * {
+    margin: -5px 0;
+  }
+}
+
+.userListPagination {
+  margin-bottom: 72px;
+  display: flex;
+}
