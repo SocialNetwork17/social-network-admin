@@ -6,7 +6,6 @@ import { HeaderMenu } from '@/widgets/header/ui/HeaderMenu/HeaderMenu'
 export const Header = () => {
   const [countNotices, setCountNotices] = useState<number>(0)
 
-
   const onClickHandler = () => {
     setCountNotices(countNotices + 1)
   }
