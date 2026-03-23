@@ -4,6 +4,8 @@ import styles from "./rootLayout.module.scss";
 import { Sidebar } from "@/widgets/sidebar/ui/Sidebar";
 import { SnackbarProvider } from "@/widgets/snackbar/model/snackbar.provider";
 import { usePathname } from 'next/navigation';
+import {ModalProvider} from "@/widgets/modal/model/modal.provider";
+
 import { AuthProvider, useAuth } from "@/shared/auth/authContext";
 
 type Props = {
@@ -17,13 +19,15 @@ const LayoutContent = ({ children }: Props) => {
 
     return (
         <SnackbarProvider>
-            <Header />
-            <div className={styles.layout}>
-                {!isAuthPage && isLoggedIn && <Sidebar />}
-                <main className={styles.main}>
-                    {children}
-                </main>
-            </div>
+            <ModalProvider>
+                <Header />
+                <div className={styles.layout}>
+                    {!isAuthPage && isLoggedIn && <Sidebar />}
+                    <main className={styles.main}>
+                        {children}
+                    </main>
+                </div>
+            </ModalProvider>
         </SnackbarProvider>
     )
 }
