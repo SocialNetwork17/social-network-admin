@@ -33,7 +33,9 @@ const handleSearch = (userId: number) => {
 
   return (
     <div className={styles.container}>
-      <SearchInput placeholder={"Search input"} onSearch={handleSearch}/>
+        <div className={styles.userTop}>
+            <SearchInput placeholder={"Search input"} onSearch={handleSearch}/>
+        </div>
       <p>{searchUserId}</p>
     </div>
   );
