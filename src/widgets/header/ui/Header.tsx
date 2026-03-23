@@ -6,6 +6,7 @@ import { HeaderMenu } from '@/widgets/header/ui/HeaderMenu/HeaderMenu'
 import { useAuth } from '@/shared/auth/authContext'
 
 export const Header = () => {
+
   const { isLoggedIn } = useAuth()
   const [countNotices, setCountNotices] = useState<number>(0)
 
