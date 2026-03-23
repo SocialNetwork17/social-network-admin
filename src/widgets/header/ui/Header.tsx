@@ -16,8 +16,6 @@ export const Header = () => {
       <div className={styles.container}>
         <div className={styles.headerWrapper}>
           <h1 className={styles.logo}>Unitygram<span>SuperAdmin</span></h1>
-
-
           <HeaderMenu
             countMessage={countNotices}
             isLoggedIn={true}
