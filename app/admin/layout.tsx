@@ -14,7 +14,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
   }, [isLoggedIn, router])
 
-  if (!isLoggedIn) return null
+  if (!isLoggedIn) return <div>Loading...</div>
 
   return <>{children}</>
 }
