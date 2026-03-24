@@ -1,8 +1,9 @@
 import {REMOVE_USER} from "@/pages/usersList/api/users";
 import {useMutation} from "@apollo/client/react";
+import {GetUsersQuery, RemoveUserMutation, RemoveUserMutationVariables} from "@/pages/usersList/api/users.generated";
 
 export const useRemoveUser = () => {
-    const [removeUserMutation, { loading, error }] = useMutation(REMOVE_USER, {
+    const [removeUserMutation, { loading, error }] = useMutation<RemoveUserMutation, RemoveUserMutationVariables>(REMOVE_USER, {
         // Обновляем кэш после удаления
         update(cache, { data }) {
             if (data?.removeUser) {
