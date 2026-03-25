@@ -8,9 +8,11 @@ import type { SignInMutation, SignInMutationVariables } from '../api/signIn.muta
 import s from './SignInForm.module.scss';
 import {Button} from "@/shared/ul/Button/Button";
 import {Input} from "@/shared/ul/Input/Input";
+import { useAuth } from '@/shared/auth/authContext';
 
 export const SignInForm = () => {
   const router = useRouter();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -18,6 +20,7 @@ export const SignInForm = () => {
   const [signIn, { loading }] = useMutation<SignInMutation, SignInMutationVariables>(SIGN_IN_MUTATION, {
     onCompleted: (data) => {
       if (data.loginAdmin.logged) {
+        login();
         router.push('/admin/users');
       } else {
         setErrorMessage('Invalid credentials');
@@ -67,11 +70,12 @@ export const SignInForm = () => {
 
 
         {errorMessage && <p className={s.error}>{errorMessage}</p>}
-          
-          <Button variant={'primary'} type="submit" disabled={loading}>
+          <div className={s.button}>
+            <Button variant={'primary'} type="submit" disabled={loading}>
               {loading ? 'Signing in...' : 'Sign In'}
-          </Button>
-          
+            </Button> 
+          </div>
+
       </form>
   );
 };

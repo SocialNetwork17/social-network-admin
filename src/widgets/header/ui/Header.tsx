@@ -1,11 +1,14 @@
+'use client'
 
 import React, { useState } from 'react'
 import styles from './Header.module.scss'
 import { HeaderMenu } from '@/widgets/header/ui/HeaderMenu/HeaderMenu'
+import { useAuth } from '@/shared/auth/authContext'
 
 export const Header = () => {
-  const [countNotices, setCountNotices] = useState<number>(0)
 
+  const { isLoggedIn } = useAuth()
+  const [countNotices, setCountNotices] = useState<number>(0)
 
   const onClickHandler = () => {
     setCountNotices(countNotices + 1)
@@ -18,7 +21,7 @@ export const Header = () => {
           <h1 className={styles.logo}>Unitygram<span>SuperAdmin</span></h1>
           <HeaderMenu
             countMessage={countNotices}
-            isLoggedIn={true}
+            isLoggedIn={isLoggedIn}
             onClickHandler={onClickHandler}
           />
         </div>

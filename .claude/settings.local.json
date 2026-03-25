@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"M:\\\\IT-INCUBATOR-front\\\\0-career-booster\\\\inctagram\\\\social-network-admin\\\\social-network-admin\" && node -e \"const { gql } = require\\('@apollo/client'\\); console.log\\('gql ok'\\)\" 2>&1)",
+      "Bash(cat \"M:\\\\IT-INCUBATOR-front\\\\0-career-booster\\\\inctagram\\\\social-network-admin\\\\social-network-admin\\\\node_modules\\\\@apollo\\\\client\\\\package.json\" | node -e \"const d=require\\('/dev/stdin'\\); console.log\\('exports keys:', Object.keys\\(d.exports || {}\\).slice\\(0,10\\)\\); console.log\\('types:', d.types\\); console.log\\('main:', d.main\\)\")",
+      "Bash(cd:*)",
+      "Bash(wait:*)",
+      "Bash(find:*)",
+      "Bash(grep -r \"useQuery\\\\|useMutation\\\\|gql\\\\|QUERY\\\\|MUTATION\" /m/IT-INCUBATOR-front/0-career-booster/inctagram/social-network-admin/social-network-admin/src --include=*.ts --include=*.tsx -l)",
+      "Bash(grep -r \"inctagram.work\\\\|localhost\\\\|api\" /m/IT-INCUBATOR-front/0-career-booster/inctagram/social-network-admin/social-network-admin --include=*.ts --include=*.tsx -n)",
+      "Bash(grep -r \"admin@gmail.com\\\\|admin\\\\|Authorization\\\\|Basic\" /m/IT-INCUBATOR-front/0-career-booster/inctagram/social-network-admin/social-network-admin --include=*.ts --include=*.tsx -n)"
+    ]
+  }
+}
