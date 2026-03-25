@@ -6,13 +6,15 @@ import { SnackbarProvider } from "@/widgets/snackbar/model/snackbar.provider";
 import { usePathname } from 'next/navigation';
 import {ModalProvider} from "@/widgets/modal/model/modal.provider";
 
+import { AuthProvider, useAuth } from "@/shared/auth/authContext";
 
 type Props = {
     children: React.ReactNode
 }
 
-export const RootLayoutClient = ({ children }: Props) => {
+const LayoutContent = ({ children }: Props) => {
     const pathname = usePathname()
+    const { isLoggedIn } = useAuth()
     const isAuthPage = pathname === '/'
 
     return (
@@ -20,12 +22,20 @@ export const RootLayoutClient = ({ children }: Props) => {
             <ModalProvider>
                 <Header />
                 <div className={styles.layout}>
-                    {!isAuthPage && <Sidebar />}
+                    {!isAuthPage && isLoggedIn && <Sidebar />}
                     <main className={styles.main}>
                         {children}
                     </main>
                 </div>
             </ModalProvider>
         </SnackbarProvider>
+    )
+}
+
+export const RootLayoutClient = ({ children }: Props) => {
+    return (
+        <AuthProvider>
+            <LayoutContent>{children}</LayoutContent>
+        </AuthProvider>
     )
 }
