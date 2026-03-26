@@ -1,22 +1,33 @@
 "use client";
 
-import { PostsWithText } from "@/shared/ul/PostsWithText/PostsWithText";
 import styles from "./PostList.module.scss";
-import { useQuery } from "@apollo/client/react";
+import {useState} from "react";
+import { useQuery, useLazyQuery } from "@apollo/client/react";
 import { POSTS_ALL_QUERY } from "../api/postsAll.mutation";
+import { GET_USER } from "@/pages/postsList/api/users";
 import {
   GetAllPostsQuery,
   GetAllPostsQueryVariables,
 } from "../api/postsAll.mutation.generated";
+import {GetUserQuery, GetUserQueryVariables} from "@/pages/postsList/api/users.generated";
+import { PostsWithText } from "@/shared/ul/PostsWithText/PostsWithText";
 import { setErrorMessageHandler } from "@apollo/client/dev";
 import { PostWithTextSkeleton } from "@/shared/ul/PostsWithText/PostWithTextSkeleton/PostWithTextSkeleton";
-import {useLazyQuery} from "@apollo/client/react";
-import { GET_USER } from "@/pages/postsList/api/users";
 import {SearchInput} from "@/shared/ul/SearchInput/SearchInput";
-import {GetUserQuery, GetUserQueryVariables} from "@/pages/postsList/api/users.generated";
-import {useState} from "react";
 
 export const PostList = () => {
+    const [searchUserId, setSearchUserId] = useState<number | null>(null);
+
+    const [getUser, {
+        data: userData,
+        loading: userLoading,
+        error: userError
+    }] = useLazyQuery<GetUserQuery, GetUserQueryVariables>(GET_USER);
+
+    const handleSearch = (userId: number) => {
+        setSearchUserId(userId);
+        getUser({ variables: { userId } });
+    };
 
   const { data, loading, error, networkStatus } = useQuery<
     GetAllPostsQuery,
@@ -32,15 +43,7 @@ export const PostList = () => {
     },
   });
 
-const [searchUserId, setSearchUserId] = useState<number | null>(null);
-
   const posts = (data as GetAllPostsQuery)?.getPosts?.items;
-const [getUser, { data, loading, error }] = useLazyQuery<GetUserQuery, GetUserQueryVariables>(GET_USER);
-
-const handleSearch = (userId: number) => {
-    setSearchUserId(userId);
-    getUser({ variables: { userId } });
-};
 
   console.log('Query state:', { loading, error, data });
 
@@ -49,12 +52,13 @@ const handleSearch = (userId: number) => {
 
   return (
     <div className={styles.container}>
-      {(!posts || posts.length === 0) && <PostWithTextSkeleton />}
-      {posts && posts.length > 0 && <PostsWithText posts={posts} />}
         <div className={styles.userTop}>
             <SearchInput placeholder={"Search input"} onSearch={handleSearch}/>
+            {userError && <div>User search error: {userError.message}</div>}
+            {searchUserId}
         </div>
-      <p>{searchUserId}</p>
+        {(!posts || posts.length === 0) && <PostWithTextSkeleton />}
+        {posts && posts.length > 0 && <PostsWithText posts={posts} />}
     </div>
   );
 };
