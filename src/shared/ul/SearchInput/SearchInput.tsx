@@ -8,7 +8,7 @@ type Props = {
   error?: boolean
   errorText?: string
   disabled?: boolean
-  onSearch?: (value: number) => void
+  onSearch?: (value: string) => void
 }
 
 export const SearchInput = ((props: Props) => {
@@ -24,10 +24,7 @@ export const SearchInput = ((props: Props) => {
 
   const handleSearch = () => {
     if (value.trim() && onSearch) {
-      const userId = parseInt(value.trim(), 10);
-      if (!isNaN(userId)) {
-        onSearch(userId);
-      }
+      onSearch(value.trim())
     }
   }
 

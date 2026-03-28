@@ -2,37 +2,31 @@
 
 import styles from "./PostList.module.scss";
 import {useState} from "react";
-import { useQuery, useLazyQuery } from "@apollo/client/react";
+import { useQuery } from "@apollo/client/react";
 import { POSTS_ALL_QUERY } from "../api/postsAll.mutation";
-import { GET_USER } from "@/pages/postsList/api/users";
 import {
   GetAllPostsQuery,
   GetAllPostsQueryVariables,
 } from "../api/postsAll.mutation.generated";
-import {GetUserQuery, GetUserQueryVariables} from "@/pages/postsList/api/users.generated";
 import { PostsWithText } from "@/shared/ul/PostsWithText/PostsWithText";
 import { setErrorMessageHandler } from "@apollo/client/dev";
 import { PostWithTextSkeleton } from "@/shared/ul/PostsWithText/PostWithTextSkeleton/PostWithTextSkeleton";
 import {SearchInput} from "@/shared/ul/SearchInput/SearchInput";
 
 export const PostList = () => {
-    const [searchUserId, setSearchUserId] = useState<number | null>(null);
+    const [searchTerm, setSearchTerm] = useState<string>("");
 
-    const [getUser, {
-        data: userData,
-        loading: userLoading,
-        error: userError
-    }] = useLazyQuery<GetUserQuery, GetUserQueryVariables>(GET_USER);
-
-    const handleSearch = (userId: number) => {
-        setSearchUserId(userId);
-        getUser({ variables: { userId } });
+    const handleSearch = (userName: string) => {
+        setSearchTerm(userName);
     };
 
   const { data, loading, error, networkStatus } = useQuery<
     GetAllPostsQuery,
     GetAllPostsQueryVariables
   >(POSTS_ALL_QUERY, {
+      variables: {
+          searchTerm: searchTerm || undefined,
+      },
     notifyOnNetworkStatusChange: true,
     onCompleted: (data: GetAllPostsQuery) => {
       console.log("Query completed:", data);
@@ -47,15 +41,13 @@ export const PostList = () => {
 
   console.log('Query state:', { loading, error, data });
 
-  if (loading) return <div>Loading posts...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  if (loading) return <div className={styles.loading}>Loading posts...</div>;
+  if (error) return <div className={styles.loading}>Error: {error.message}</div>;
 
   return (
     <div className={styles.container}>
         <div className={styles.userTop}>
             <SearchInput placeholder={"Search input"} onSearch={handleSearch}/>
-            {userError && <div>User search error: {userError.message}</div>}
-            {searchUserId}
         </div>
         {(!posts || posts.length === 0) && <PostWithTextSkeleton />}
         {posts && posts.length > 0 && <PostsWithText posts={posts} />}
