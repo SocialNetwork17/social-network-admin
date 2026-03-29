@@ -16,7 +16,7 @@ const config: CodegenConfig = {
             },
             plugins: ['typescript-operations'],
             config: {
-                withHooks: true
+                withHooks: true,
             }
         },
     },

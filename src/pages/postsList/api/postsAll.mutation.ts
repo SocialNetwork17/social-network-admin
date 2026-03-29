@@ -4,7 +4,7 @@ export const POSTS_ALL_QUERY = gql`
   query GetAllPosts(
     $endCursorPostId: Int
     $searchTerm: String
-    $pageSize: Int = 8
+    $pageSize: Int = 12
     $sortBy: String = "createdAt"
     $sortDirection: SortDirection = desc
   ) {
@@ -41,4 +41,30 @@ export const POSTS_ALL_QUERY = gql`
       }
     }
   }
+`;
+
+export const POSTS_SUBSCRIPTION = gql`
+    subscription OnPostAdded {
+        postAdded {
+            images {
+                url
+            }
+            id
+            ownerId
+            description
+            createdAt
+            updatedAt
+            postOwner {
+                id
+                userName
+                avatars {
+                    url
+                }
+            }
+            userBan {
+                createdAt
+                reason
+            }
+        }
+    }
 `;
