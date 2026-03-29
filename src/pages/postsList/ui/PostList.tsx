@@ -1,56 +1,70 @@
 "use client";
 
 import styles from "./PostList.module.scss";
-import {useState} from "react";
-import { useQuery } from "@apollo/client/react";
+import {useEffect, useState} from "react";
+import {useQuery, useSubscription} from "@apollo/client/react";
 import { POSTS_ALL_QUERY } from "../api/postsAll.mutation";
 import {
-  GetAllPostsQuery,
-  GetAllPostsQueryVariables,
+    GetAllPostsQuery,
+    GetAllPostsQueryVariables, OnPostAddedSubscription,
 } from "../api/postsAll.mutation.generated";
 import { PostsWithText } from "@/shared/ul/PostsWithText/PostsWithText";
-import { setErrorMessageHandler } from "@apollo/client/dev";
 import { PostWithTextSkeleton } from "@/shared/ul/PostsWithText/PostWithTextSkeleton/PostWithTextSkeleton";
 import {SearchInput} from "@/shared/ul/SearchInput/SearchInput";
+import {POSTS_SUBSCRIPTION} from "@/pages/postsList/api/postsAll.mutation";
 
 export const PostList = () => {
     const [searchTerm, setSearchTerm] = useState<string>("");
+    const [allPosts, setAllPosts] = useState<GetAllPostsQuery['getPosts']['items']>([]);
 
     const handleSearch = (userName: string) => {
         setSearchTerm(userName);
     };
 
-  const { data, loading, error, networkStatus } = useQuery<
+  const { data: postsData, loading, error } = useQuery<
     GetAllPostsQuery,
     GetAllPostsQueryVariables
   >(POSTS_ALL_QUERY, {
       variables: {
           searchTerm: searchTerm || undefined,
       },
-    notifyOnNetworkStatusChange: true,
-    onCompleted: (data: GetAllPostsQuery) => {
-      console.log("Query completed:", data);
-      console.log("Network status:", networkStatus);
-    },
-    onError: (error) => {
-      setErrorMessageHandler(error.message);
-    },
+    notifyOnNetworkStatusChange: true
   });
 
-  const posts = (data as GetAllPostsQuery)?.getPosts?.items;
+  const posts = (postsData as GetAllPostsQuery)?.getPosts?.items;
 
-  console.log('Query state:', { loading, error, data });
+  console.log('Query state:', { loading, error, posts });
 
-  if (loading) return <div className={styles.loading}>Loading posts...</div>;
-  if (error) return <div className={styles.loading}>Error: {error.message}</div>;
+    useEffect(() => {
+        if (posts) {
+            setAllPosts(posts);
+        }
+    }, [posts]);
+
+    useSubscription<OnPostAddedSubscription>(POSTS_SUBSCRIPTION, {
+        onData: ({ data }) => {
+            const newPost = data.data?.postAdded;
+            if (newPost) {
+                // Add new post at the TOP of the list
+                setAllPosts((prev) => [newPost, ...prev]); // add to top
+            }
+        },
+        skip: !postsData, // Don't start subscription until we have initial data
+    });
+
+    // Loading & Error states
+    if (loading && allPosts.length === 0) {
+        return <div className={styles.loading}>Loading posts...</div>;
+    }
+    if (error) return <div className={styles.loading}>Error: {error.message}</div>;
 
   return (
     <div className={styles.container}>
         <div className={styles.userTop}>
             <SearchInput placeholder={"Search input"} onSearch={handleSearch}/>
         </div>
-        {(!posts || posts.length === 0) && <PostWithTextSkeleton />}
-        {posts && posts.length > 0 && <PostsWithText posts={posts} />}
+        {allPosts.length === 0 && <PostWithTextSkeleton />}
+        {allPosts.length > 0 && <PostsWithText posts={allPosts} />}
     </div>
   );
 };
