@@ -7,3 +7,32 @@
   justify-content: start;
   gap: 36px;
 }
+
+.loader {
+  margin-top: 20px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.observerTrigger {
+  height: 20px;
+  width: 100%;
+  margin: 20px 0;
+}
+
+.endMessage {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  font-size: 14px;
+  border-top: 1px solid #e0e0e0;
+  margin-top: 20px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
