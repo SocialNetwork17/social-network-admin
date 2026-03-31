@@ -31,19 +31,23 @@ export const PostList = () => {
     notifyOnNetworkStatusChange: true,
   });
 
-  const posts = (data as GetAllPostsQuery)?.getPosts?.items;
-  const totalCount = data?.getPosts?.totalCount || 0;
+  // ✅ Добавляем безопасное получение данных с fallback на пустой массив
+  const posts = data?.getPosts?.items ?? [];
+  const totalCount = data?.getPosts?.totalCount ?? 0;
   const isLoadingMore = networkStatus === 3;
 
   // Проверяем, есть ли еще посты для загрузки
   useEffect(() => {
-    if (posts.length >= totalCount && totalCount > 0) {
+    // ✅ Добавляем проверку на наличие posts
+    if (posts && posts.length >= totalCount && totalCount > 0) {
       setHasMore(false);
       console.log("✅ Все посты загружены! Всего:", posts.length);
-    } else if (posts.length > 0) {
+    } else if (posts && posts.length > 0) {
       const lastPost = posts[posts.length - 1];
       setCurrentCursor(lastPost?.id);
-      console.log(`📊 Прогресс: ${posts.length}/${totalCount} (${Math.round(posts.length / totalCount * 100)}%)`);
+      console.log(
+        `📊 Прогресс: ${posts.length}/${totalCount} (${Math.round((posts.length / totalCount) * 100)}%)`,
+      );
     }
   }, [posts, totalCount]);
 
@@ -53,7 +57,8 @@ export const PostList = () => {
       return;
     }
 
-    if (!posts.length) {
+    // ✅ Проверяем наличие posts
+    if (!posts || posts.length === 0) {
       return;
     }
 
@@ -77,9 +82,9 @@ export const PostList = () => {
         updateQuery: (prev, { fetchMoreResult }) => {
           if (!fetchMoreResult) return prev;
 
-          const oldPosts = prev.getPosts?.items || [];
-          const newPosts = fetchMoreResult.getPosts?.items || [];
-          
+          const oldPosts = prev.getPosts?.items ?? [];
+          const newPosts = fetchMoreResult.getPosts?.items ?? [];
+
           if (newPosts.length === 0) {
             console.log("🏁 Новых постов нет, пагинация завершена");
             setHasMore(false);
@@ -87,11 +92,11 @@ export const PostList = () => {
           }
 
           // Проверяем дубликаты
-          const existingIds = new Set(oldPosts.map(p => p.id));
-          const uniqueNewPosts = newPosts.filter(p => !existingIds.has(p.id));
-          
+          const existingIds = new Set(oldPosts.map((p) => p.id));
+          const uniqueNewPosts = newPosts.filter((p) => !existingIds.has(p.id));
+
           console.log(`✨ Добавлено ${uniqueNewPosts.length} новых постов`);
-          
+
           return {
             ...prev,
             getPosts: {
@@ -101,23 +106,27 @@ export const PostList = () => {
           };
         },
       });
-      
     } catch (err) {
       console.error("❌ Ошибка при загрузке:", err);
     } finally {
       isLoadingMoreRef.current = false;
     }
-  }, [posts.length, fetchMore, isLoadingMore, hasMore, currentCursor]);
+  }, [posts, posts?.length, fetchMore, isLoadingMore, hasMore, currentCursor]);
 
   // Настройка Intersection Observer для бесконечного скролла
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && !loading && !isLoadingMore && hasMore) {
+        if (
+          entries[0].isIntersecting &&
+          !loading &&
+          !isLoadingMore &&
+          hasMore
+        ) {
           loadMore();
         }
       },
-      { threshold: 0.1, rootMargin: "100px" }
+      { threshold: 0.1, rootMargin: "100px" },
     );
 
     const currentTarget = observerTarget.current;
@@ -132,8 +141,12 @@ export const PostList = () => {
     };
   }, [loadMore, loading, isLoadingMore, hasMore]);
 
-  if (loading && posts.length === 0) {
-    return <div>Loading posts...</div>;
+  if (loading && (!posts || posts.length === 0)) {
+    return (
+      <div className={styles.container}>
+        <PostWithTextSkeleton />
+      </div>
+    );
   }
 
   if (error) {
@@ -142,22 +155,23 @@ export const PostList = () => {
 
   return (
     <div className={styles.container}>
-      {posts.length > 0 && <PostsWithText posts={posts} />}
+      {/* ✅ Добавляем проверку на наличие posts и его длину */}
+      {posts && posts.length > 0 && <PostsWithText posts={posts} />}
 
       {/* Индикатор загрузки */}
       {isLoadingMore && (
         <div className={styles.loader}>
-          <PostWithTextSkeleton />
+            Загрузка постов...
         </div>
       )}
 
       {/* Триггер для бесконечного скролла */}
-      {hasMore && posts.length < totalCount && (
+      {hasMore && posts && posts.length < totalCount && (
         <div ref={observerTarget} className={styles.observerTrigger} />
       )}
 
       {/* Сообщение о завершении списка */}
-      {!hasMore && posts.length === totalCount && totalCount > 0 && (
+      {!hasMore && posts && posts.length === totalCount && totalCount > 0 && (
         <div className={styles.endMessage}>
           🎉 Вы просмотрели все {totalCount} постов!
         </div>
