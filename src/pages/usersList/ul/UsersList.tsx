@@ -13,10 +13,15 @@ import {formatToDDMMYYYY} from "@/shared/utils/dateFormat";
 import {GetUsersQuery, GetUsersQueryVariables} from "@/pages/usersList/api/users.generated";
 import {SortDirection, UserBlockStatus} from '@/types';
 
+type SortField = 'createdAt' | 'userName'
+
 export const UsersList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(8);
     const [searchTerm, setSearchTerm] = useState('');
+    // сортировка
+    const [sortBy, setSortBy] = useState<SortField>('createdAt')
+    const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.Desc)
 
     const { data, loading, error } = useQuery<GetUsersQuery, GetUsersQueryVariables>(
         GET_USERS,
@@ -24,8 +29,8 @@ export const UsersList = () => {
             variables: {
                 pageNumber: currentPage,
                 pageSize: itemsPerPage,
-                sortBy: 'createdAt',
-                sortDirection: SortDirection.Desc,
+                sortBy,
+                sortDirection,
                 searchTerm: searchTerm || undefined,
                 statusFilter: UserBlockStatus.All,
             },
@@ -61,6 +66,35 @@ export const UsersList = () => {
     // Общее количество элементов для пагинации
     const totalItems = pagination?.totalCount || 0;
 
+    // сортировка
+    const handleSortByUserName = () => {
+        setCurrentPage(1)
+
+        if (sortBy === 'userName') {
+            setSortDirection(prev =>
+                prev === SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc
+            )
+            return
+        }
+
+        setSortBy('userName')
+        setSortDirection(SortDirection.Asc)
+    }
+
+    const handleSortByCreatedAt = () => {
+        setCurrentPage(1)
+
+        if (sortBy === 'createdAt') {
+            setSortDirection(prev =>
+                prev === SortDirection.Desc ? SortDirection.Asc : SortDirection.Desc
+            )
+            return
+        }
+
+        setSortBy('createdAt')
+        setSortDirection(SortDirection.Desc)
+    }
+
     return (
         <div className={styles.container}>
             <div className={styles.userTop}>
@@ -77,9 +111,29 @@ export const UsersList = () => {
             <div className={styles.userListHeader}>
                 <div className={styles.userID}>User ID</div>
                 <div className={styles.profileLink}>Profile link</div>
-                <div className={styles.username}>Username</div>
-                <div className={styles.dateAdded}>Date added</div>
+
+                 {/*нопки сортировки*/}
+                <button
+                    type="button"
+                    className={`${styles.sortButton} ${styles.username}`}
+                    onClick={handleSortByUserName}
+                >
+                    Username
+                    <Icon iconId={"sortingUser"} size={12}  viewBox="0 0 8 12"/>
+                </button>
+
+                <button
+                    type="button"
+                    className={`${styles.sortButton} ${styles.dateAdded}`}
+                    onClick={handleSortByCreatedAt}
+                >
+                    Date added
+                    <Icon iconId={"sortingUser"} size={12}  viewBox="0 0 8 12"/>
+                </button>
+
                 <div className={styles.threeDotsArea}></div>
+
+
             </div>
             <ul className={styles.userListBody}>
                 {users?.map((user) => (
@@ -94,7 +148,7 @@ export const UsersList = () => {
                         <div className={styles.username}>{user.userName}</div>
                         <div className={styles.dateAdded}>{formatToDDMMYYYY(user.createdAt)}</div>
                         <div className={styles.threeDotsArea}>
-                            <ThreeDotsMenu userId={123} />
+                            <ThreeDotsMenu userId={user.id} />
                         </div>
                     </li>
                 ))}
