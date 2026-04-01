@@ -66,33 +66,19 @@ export const UsersList = () => {
     // Общее количество элементов для пагинации
     const totalItems = pagination?.totalCount || 0;
 
-    // сортировка
-    const handleSortByUserName = () => {
+    // сортировка - общая функция
+    const handleSort = (field: SortField, defaultDirection: SortDirection) => {
         setCurrentPage(1)
 
-        if (sortBy === 'userName') {
+        if (sortBy === field) {
             setSortDirection(prev =>
                 prev === SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc
             )
             return
         }
 
-        setSortBy('userName')
-        setSortDirection(SortDirection.Asc)
-    }
-
-    const handleSortByCreatedAt = () => {
-        setCurrentPage(1)
-
-        if (sortBy === 'createdAt') {
-            setSortDirection(prev =>
-                prev === SortDirection.Desc ? SortDirection.Asc : SortDirection.Desc
-            )
-            return
-        }
-
-        setSortBy('createdAt')
-        setSortDirection(SortDirection.Desc)
+        setSortBy(field)
+        setSortDirection(defaultDirection)
     }
 
     return (
@@ -116,7 +102,7 @@ export const UsersList = () => {
                 <button
                     type="button"
                     className={`${styles.sortButton} ${styles.username}`}
-                    onClick={handleSortByUserName}
+                    onClick={() => handleSort('userName', SortDirection.Asc)}
                 >
                     Username
                     <Icon iconId={"sortingUser"} size={12}  viewBox="0 0 8 12"/>
@@ -125,7 +111,7 @@ export const UsersList = () => {
                 <button
                     type="button"
                     className={`${styles.sortButton} ${styles.dateAdded}`}
-                    onClick={handleSortByCreatedAt}
+                    onClick={() => handleSort('createdAt', SortDirection.Desc)}
                 >
                     Date added
                     <Icon iconId={"sortingUser"} size={12}  viewBox="0 0 8 12"/>
