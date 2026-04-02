@@ -1,147 +1,21 @@
 "use client";
 
-import { useEffect, useRef, useCallback, useState } from "react";
 import { PostsWithText } from "@/shared/ul/PostsWithText/PostsWithText";
-import styles from "./PostList.module.scss";
-import { useQuery } from "@apollo/client/react";
-import { POSTS_ALL_QUERY } from "../api/postsAll.mutation";
-import {
-  GetAllPostsQuery,
-  GetAllPostsQueryVariables,
-} from "../api/postsAll.mutation.generated";
 import { PostWithTextSkeleton } from "@/shared/ul/PostsWithText/PostWithTextSkeleton/PostWithTextSkeleton";
-import { SortDirection } from "@/types";
+import styles from "./PostList.module.scss";
+import { usePostsPagination } from "../api/usePostsPagination";
 
 export const PostList = () => {
-  const observerTarget = useRef<HTMLDivElement>(null);
-  const isLoadingMoreRef = useRef(false);
-  const [hasMore, setHasMore] = useState(true);
-  const [currentCursor, setCurrentCursor] = useState<number | null>(null);
+  const {
+    posts,
+    loading,
+    error,
+    isLoadingMore,
+    hasMore,
+    loadMore,
+  } = usePostsPagination();
 
-  const { data, loading, error, networkStatus, fetchMore } = useQuery<
-    GetAllPostsQuery,
-    GetAllPostsQueryVariables
-  >(POSTS_ALL_QUERY, {
-    variables: {
-      pageSize: 8,
-      endCursorPostId: null,
-      sortBy: "createdAt",
-      sortDirection: SortDirection.Desc,
-    },
-    notifyOnNetworkStatusChange: true,
-  });
-
-  // ✅ Добавляем безопасное получение данных с fallback на пустой массив
-  const posts = data?.getPosts?.items ?? [];
-  const totalCount = data?.getPosts?.totalCount ?? 0;
-  const isLoadingMore = networkStatus === 3;
-
-  // Проверяем, есть ли еще посты для загрузки
-  useEffect(() => {
-    // ✅ Добавляем проверку на наличие posts
-    if (posts && posts.length >= totalCount && totalCount > 0) {
-      setHasMore(false);
-      console.log("✅ Все посты загружены! Всего:", posts.length);
-    } else if (posts && posts.length > 0) {
-      const lastPost = posts[posts.length - 1];
-      setCurrentCursor(lastPost?.id);
-      console.log(
-        `📊 Прогресс: ${posts.length}/${totalCount} (${Math.round((posts.length / totalCount) * 100)}%)`,
-      );
-    }
-  }, [posts, totalCount]);
-
-  const loadMore = useCallback(async () => {
-    // Защита от множественных вызовов
-    if (isLoadingMoreRef.current || isLoadingMore || !hasMore) {
-      return;
-    }
-
-    // ✅ Проверяем наличие posts
-    if (!posts || posts.length === 0) {
-      return;
-    }
-
-    // Используем сохраненный cursor
-    const endCursorPostId = currentCursor;
-
-    if (!endCursorPostId) {
-      return;
-    }
-
-    console.log(`🔄 Загрузка страницы ${Math.floor(posts.length / 8) + 1}...`);
-
-    isLoadingMoreRef.current = true;
-
-    try {
-      await fetchMore({
-        variables: {
-          endCursorPostId: Number(endCursorPostId),
-          pageSize: 8,
-        },
-        updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult) return prev;
-
-          const oldPosts = prev.getPosts?.items ?? [];
-          const newPosts = fetchMoreResult.getPosts?.items ?? [];
-
-          if (newPosts.length === 0) {
-            console.log("🏁 Новых постов нет, пагинация завершена");
-            setHasMore(false);
-            return prev;
-          }
-
-          // Проверяем дубликаты
-          const existingIds = new Set(oldPosts.map((p) => p.id));
-          const uniqueNewPosts = newPosts.filter((p) => !existingIds.has(p.id));
-
-          console.log(`✨ Добавлено ${uniqueNewPosts.length} новых постов`);
-
-          return {
-            ...prev,
-            getPosts: {
-              ...fetchMoreResult.getPosts,
-              items: [...oldPosts, ...uniqueNewPosts],
-            },
-          };
-        },
-      });
-    } catch (err) {
-      console.error("❌ Ошибка при загрузке:", err);
-    } finally {
-      isLoadingMoreRef.current = false;
-    }
-  }, [posts, posts?.length, fetchMore, isLoadingMore, hasMore, currentCursor]);
-
-  // Настройка Intersection Observer для бесконечного скролла
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (
-          entries[0].isIntersecting &&
-          !loading &&
-          !isLoadingMore &&
-          hasMore
-        ) {
-          loadMore();
-        }
-      },
-      { threshold: 0.1, rootMargin: "100px" },
-    );
-
-    const currentTarget = observerTarget.current;
-    if (currentTarget) {
-      observer.observe(currentTarget);
-    }
-
-    return () => {
-      if (currentTarget) {
-        observer.unobserve(currentTarget);
-      }
-    };
-  }, [loadMore, loading, isLoadingMore, hasMore]);
-
-  if (loading && (!posts || posts.length === 0)) {
+  if (loading && posts.length === 0) {
     return (
       <div className={styles.container}>
         <PostWithTextSkeleton />
@@ -155,25 +29,16 @@ export const PostList = () => {
 
   return (
     <div className={styles.container}>
-      {/* ✅ Добавляем проверку на наличие posts и его длину */}
-      {posts && posts.length > 0 && <PostsWithText posts={posts} />}
-
-      {/* Индикатор загрузки */}
+      {posts.length > 0 && <PostsWithText posts={posts} />}
       {isLoadingMore && (
-        <div className={styles.loader}>
-            Загрузка постов...
-        </div>
+        <div className={styles.loader}>Загрузка постов...</div>
       )}
-
-      {/* Триггер для бесконечного скролла */}
-      {hasMore && posts && posts.length < totalCount && (
-        <div ref={observerTarget} className={styles.observerTrigger} />
+      {hasMore && posts.length > 0 && (
+        <div ref={loadMore.triggerRef} className={styles.observerTrigger} />
       )}
-
-      {/* Сообщение о завершении списка */}
-      {!hasMore && posts && posts.length === totalCount && totalCount > 0 && (
+      {!hasMore && posts.length === 0 && (
         <div className={styles.endMessage}>
-          🎉 Вы просмотрели все {totalCount} постов!
+          🎉 Вы просмотрели все посты!
         </div>
       )}
     </div>
