@@ -24,8 +24,6 @@ export const Card = (props: Props) => {
   // Нормализуем images в массив для единообразной работы
   const imagesArray = Array.isArray(images) ? images : [images]
 
-  console.log(imagesArray)
-
   if (!imagesArray.length) return <Skeleton height={204} width={204} />
 
   const nextSlide = () => {

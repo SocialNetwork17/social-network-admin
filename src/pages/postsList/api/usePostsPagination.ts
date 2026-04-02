@@ -18,7 +18,7 @@ export const usePostsPagination = () => {
     GetAllPostsQueryVariables
   >(POSTS_ALL_QUERY, {
     variables: {
-      pageSize: 8,
+      pageSize: 12,
       endCursorPostId: null,
       sortBy: "createdAt",
       sortDirection: SortDirection.Desc,
