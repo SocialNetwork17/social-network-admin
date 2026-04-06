@@ -9,14 +9,32 @@ import {
     GetAllPostsQueryVariables, OnPostAddedSubscription,
 } from "../api/postsAll.mutation.generated";
 import { PostsWithText } from "@/shared/ul/PostsWithText/PostsWithText";
+import { PostsWithText } from "@/shared/ul/PostsWithText/PostsWithText";
 import { PostWithTextSkeleton } from "@/shared/ul/PostsWithText/PostWithTextSkeleton/PostWithTextSkeleton";
+import styles from "./PostList.module.scss";
+import { usePostsPagination } from "../api/usePostsPagination";
 import {SearchInput} from "@/shared/ul/SearchInput/SearchInput";
 import {POSTS_SUBSCRIPTION} from "@/pages/postsList/api/postsAll.mutation";
 
 export const PostList = () => {
+  const {
+    posts,
+    loading,
+    error,
+    isLoadingMore,
+    hasMore,
+    loadMore,
+  } = usePostsPagination();
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [allPosts, setAllPosts] = useState<GetAllPostsQuery['getPosts']['items']>([]);
 
+  if (loading && posts.length === 0) {
+    return (
+      <div className={styles.container}>
+        <PostWithTextSkeleton />
+      </div>
+    );
+  }
     const handleSearch = (userName: string) => {
         setSearchTerm(userName);
     };
@@ -31,6 +49,9 @@ export const PostList = () => {
     notifyOnNetworkStatusChange: true
   });
 
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
   const posts = (postsData as GetAllPostsQuery)?.getPosts?.items;
 
   console.log('Query state:', { loading, error, posts });
@@ -60,6 +81,18 @@ export const PostList = () => {
 
   return (
     <div className={styles.container}>
+      {posts.length > 0 && <PostsWithText posts={posts} />}
+      {isLoadingMore && (
+        <div className={styles.loader}>Загрузка постов...</div>
+      )}
+      {hasMore && posts.length > 0 && (
+        <div ref={loadMore.triggerRef} className={styles.observerTrigger} />
+      )}
+      {!hasMore && posts.length === 0 && (
+        <div className={styles.endMessage}>
+          🎉 Вы просмотрели все посты!
+        </div>
+      )}
         <div className={styles.userTop}>
             <SearchInput placeholder={"Search input"} onSearch={handleSearch}/>
         </div>

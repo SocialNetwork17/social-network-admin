@@ -4,7 +4,7 @@ import styles from './PostWithTextSkeleton.module.scss'
 export const PostWithTextSkeleton = () => {
   return (
     <div className={styles.container}>
-      {Array(4)
+      {Array(8)
         .fill(null)
         .map((_, index) => (
           <div className={styles.wpapper} key={index}>
@@ -17,7 +17,6 @@ export const PostWithTextSkeleton = () => {
             <Skeleton height={63} width={234} />
           </div>
         ))}
-      А
     </div>
   )
 }
