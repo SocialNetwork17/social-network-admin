@@ -1,6 +1,6 @@
 "use client"
 import styles from './LegalPage.module.scss'
-import {IconButton} from "@/shared/ui/IconButton/IconButton";
+import {IconButton} from "@/shared/ul/IconButton/IconButton";
 import {useRouter} from "next/navigation";
 
 type Props = {
