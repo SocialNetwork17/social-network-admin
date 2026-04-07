@@ -7,6 +7,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import {ModalProvider} from "@/widgets/modal/model/modal.provider";
 
 import { AuthProvider, useAuth } from "@/shared/auth/authContext";
+import {Suspense} from "react";
 
 type Props = {
     children: React.ReactNode
@@ -37,7 +38,9 @@ const LayoutContent = ({ children }: Props) => {
 export const RootLayoutClient = ({ children }: Props) => {
     return (
         <AuthProvider>
-            <LayoutContent>{children}</LayoutContent>
+            <Suspense fallback={null}>
+                <LayoutContent>{children}</LayoutContent>
+            </Suspense>
         </AuthProvider>
     )
 }
