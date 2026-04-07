@@ -98,7 +98,6 @@ export const UsersList = () => {
                 <div className={styles.userID}>User ID</div>
                 <div className={styles.profileLink}>Profile link</div>
 
-                 {/*нопки сортировки*/}
                 <button
                     type="button"
                     className={`${styles.sortButton} ${styles.username}`}
