@@ -17,7 +17,7 @@ const LayoutContent = ({ children }: Props) => {
     const searchParams = useSearchParams()
     const { isLoggedIn } = useAuth()
     const isAuthPage = pathname === '/'
-    const isUserDetailsPage = pathname === '/admin/users' && !!searchParams.get('userId')
+    const isUserDetailsPage = pathname === '/admin/users' && !!searchParams?.get('userId')
 
     return (
         <SnackbarProvider>

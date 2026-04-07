@@ -48,7 +48,6 @@ export const ThreeDotsMenu = ({ userId }: ThreeDotsMenuProps) => {
     const handleMoreInfo = () => {
         setIsMenuOpen(false)
         router.push(`/admin/users?userId=${userId}`)
-        //1 Когда URL меняется: Next заново вызывает page-компонент, в него приходят новые searchParams
     }
 
     return (

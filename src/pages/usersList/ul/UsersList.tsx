@@ -38,7 +38,7 @@ export const UsersList = () => {
         }
     );
 
-    if (loading) return <div className={styles.loadingState}>Loading...</div>;
+    if (loading) return <div>Loading...</div>;
 
     const users = data?.getUsers?.users || [];
 

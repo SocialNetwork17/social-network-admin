@@ -28,53 +28,45 @@ import {SortDirection} from '@/types'
 import s from './UserDetailsPage.module.scss'
 import {Icon} from "@/shared/ul/Icon/Icon";
 
-type UserDetailsPageProps = { // Компонент принимает userId.
+type UserDetailsPageProps = {
     userId: number
 }
 
 type TabKey = 'uploadedPhotos' | 'payments' | 'followers' | 'following'
 
 
-const pageSizeOptions: Option[] = [ // Константа размеров страницы для пагинации
+const pageSizeOptions: Option[] = [
     {id: '1', label: '10'},
     {id: '2', label: '20'},
     {id: '3', label: '30'},
 ]
 
-const tabs: Array<{ key: TabKey; label: string }> = [ // Это список вкладок, который потом рендерится через map.
+const tabs: Array<{ key: TabKey; label: string }> = [
     {key: 'uploadedPhotos', label: 'Uploaded photos'},
     {key: 'payments', label: 'Payments'},
     {key: 'followers', label: 'Followers'},
     {key: 'following', label: 'Following'},
 ]
 
-const formatProfileLink = (userName: string) => `https://inctagram.work/profile/${userName}` //Хелпер для ссылки на профиль.  из имени пользователя строит ссылку на его публичный профиль
-
-const formatPaymentMethod = (value?: string | null) => value?.replaceAll('_', ' ') ?? '-' // Хелпер для метода оплаты
-// value?. → если есть значение
-//     .replaceAll('_', ' ') → заменяет _ на пробел
-// ?? '-' → если null/undefined → вернуть -
-
-const getFullName = (item: { firstName?: string | null; lastName?: string | null }) => { //  Хелпер полного имени. создаёт массив из имени и фамилии, соединяет через пробел
+const formatProfileLink = (userName: string) => `https://inctagram.work/profile/${userName}`
+const formatPaymentMethod = (value?: string | null) => value?.replaceAll('_', ' ') ?? '-'
+const getFullName = (item: { firstName?: string | null; lastName?: string | null }) => {
     const fullName = [item.firstName, item.lastName].filter(Boolean).join(' ')
-
     return fullName || '-'
 }
 
 export const UserDetailsPage = ({userId}: UserDetailsPageProps) => {
-    const router = useRouter() // Нужен здесь только для: router.push('/admin/users') То есть для возврата к списку пользователей.
-
-    const [activeTab, setActiveTab] = useState<TabKey>('uploadedPhotos') // Локальное состояние текущей вкладки.
-    const [currentPage, setCurrentPage] = useState(1) // Текущая страница пагинации для активной вкладки.
-    const [itemsPerPage, setItemsPerPage] = useState(Number(pageSizeOptions[0].label)) //по умолчанию на странице 10 элементов
+    const router = useRouter()
+    const [activeTab, setActiveTab] = useState<TabKey>('uploadedPhotos')
+    const [currentPage, setCurrentPage] = useState(1)
+    const [itemsPerPage, setItemsPerPage] = useState(Number(pageSizeOptions[0].label))
 
     // GraphQL запросы
     const {data, loading, error} = useQuery<GetUserDetailsQuery, GetUserDetailsQueryVariables>(GET_USER_DETAILS, {
         variables: {userId},
-        skip: Number.isNaN(userId), // - если userId не число, запрос не выполняется. Почему это важно: - если в компонент случайно передали невалидное значение, Apollo не должен отправлять плохой запрос на backend.
+        skip: Number.isNaN(userId), // - если userId не число, запрос не выполняется.
     })
 
-    // фотографии пользователя
     const photosQuery = useQuery<GetUserPhotosQuery, GetUserPhotosQueryVariables>(GET_USER_PHOTOS, {
         variables: {userId},
         skip: Number.isNaN(userId),
@@ -113,10 +105,8 @@ export const UserDetailsPage = ({userId}: UserDetailsPageProps) => {
         skip: Number.isNaN(userId) || activeTab !== 'following',
     })
 
-    const user = data?.getUser // Упрощённое получение пользователя/ Здесь из ответа GraphQL достаётся сам пользователь.
-
+    const user = data?.getUser
     const uploadedPhotos = photosQuery.data?.getPostsByUser.items?.filter(photo => photo?.url) ?? []
-
 
     //У нас есть несколько вкладок, и у каждой свой GraphQL-запрос со своими loading, error и totalCount.
     // Вместо того чтобы в JSX постоянно проверять, какая вкладка активна и к какому запросу обращаться, мы один раз выбираем нужные значения и сохраняем их в универсальные переменные.
@@ -146,25 +136,15 @@ export const UserDetailsPage = ({userId}: UserDetailsPageProps) => {
     const handleTabChange = (tab: TabKey) => {
         setActiveTab(tab)
         setCurrentPage(1)
-
-        // Когда пользователь нажимает вкладку:
-        //   - активная вкладка меняется,
-        //   - страница пагинации сбрасывается на 1.       
     }
 
     //Обработчик смены page size
     const handlePageSizeChange = (option: Option) => {
         setItemsPerPage(Number(option.label))
         setCurrentPage(1)
-
-        //Когда пользователь меняет количество элементов на странице:
-        //   - новое значение берётся из option.label
-        //   - приводится к числу
-        //   - текущая страница снова сбрасывается на 1      
     }
 
     //Защита от невалидного userId
-    //Если в компонент попал невалидный userId, не пытаемся рендерить страницу.
     if (Number.isNaN(userId)) {
         return <div className={s.status}>Invalid user id.</div>
     }

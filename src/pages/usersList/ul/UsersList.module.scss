@@ -82,12 +82,17 @@
   display: flex;
 }
 
-.loadingState {
-  min-height: 240px;
-  width: 100%;
+
+
+.sortButton {
+  border: none;
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: styles.palette('light', 100);
-  @include typo.text-regular-14;
+  gap: 8px;
+  font: inherit;
 }
