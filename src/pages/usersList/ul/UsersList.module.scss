@@ -81,3 +81,18 @@
   margin-bottom: 72px;
   display: flex;
 }
+
+
+
+.sortButton {
+  border: none;
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: inherit;
+}
