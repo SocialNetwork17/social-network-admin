@@ -33,7 +33,7 @@ export const UsersList = () => {
         }
     );
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div className={styles.loadingState}>Loading...</div>;
 
     const users = data?.getUsers?.users || [];
 
@@ -94,7 +94,7 @@ export const UsersList = () => {
                         <div className={styles.username}>{user.userName}</div>
                         <div className={styles.dateAdded}>{formatToDDMMYYYY(user.createdAt)}</div>
                         <div className={styles.threeDotsArea}>
-                            <ThreeDotsMenu userId={123} />
+                            <ThreeDotsMenu userId={user.id} />
                         </div>
                     </li>
                 ))}
