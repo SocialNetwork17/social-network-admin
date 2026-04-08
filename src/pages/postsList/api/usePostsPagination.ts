@@ -63,7 +63,7 @@ export const usePostsPagination = () => {
       await fetchMore({
         variables: {
           endCursorPostId: Number(endCursorPostId),
-          pageSize: 8,
+          pageSize: 9,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
           if (!fetchMoreResult) return prev;

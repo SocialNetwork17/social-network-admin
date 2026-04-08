@@ -36,7 +36,7 @@ export const PostList = () => {
       {hasMore && posts.length > 0 && (
         <div ref={loadMore.triggerRef} className={styles.observerTrigger} />
       )}
-      {!hasMore && posts.length === 0 && (
+      {!hasMore && !isLoadingMore  && (
         <div className={styles.endMessage}>
           🎉 Вы просмотрели все посты!
         </div>
