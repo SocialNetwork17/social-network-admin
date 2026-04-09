@@ -1,6 +1,5 @@
 import { gql } from '@apollo/client';
 
-// Используем обычный gql тег, типы будут подхвачены отдельно
 export const GET_USERS = gql`
     query GetUsers(
         $pageNumber: Int
@@ -23,15 +22,6 @@ export const GET_USERS = gql`
                 userName
                 email
                 createdAt
-                profile {
-                    firstName
-                    lastName
-                    avatars {
-                        url
-                        width
-                        height
-                    }
-                }
                 userBan {
                     reason
                     createdAt

@@ -38,7 +38,20 @@ export const UsersList = () => {
         }
     );
 
-    if (loading) return <div>Loading...</div>;
+    // сортировка - общая функция
+    const handleSort = (field: SortField, defaultDirection: SortDirection) => {
+        setCurrentPage(1)
+
+        if (sortBy === field) {
+            setSortDirection(prev =>
+                prev === SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc
+            )
+            return
+        }
+
+        setSortBy(field)
+        setSortDirection(defaultDirection)
+    }
 
     const users = data?.getUsers?.users || [];
 
@@ -65,21 +78,6 @@ export const UsersList = () => {
 
     // Общее количество элементов для пагинации
     const totalItems = pagination?.totalCount || 0;
-
-    // сортировка - общая функция
-    const handleSort = (field: SortField, defaultDirection: SortDirection) => {
-        setCurrentPage(1)
-
-        if (sortBy === field) {
-            setSortDirection(prev =>
-                prev === SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc
-            )
-            return
-        }
-
-        setSortBy(field)
-        setSortDirection(defaultDirection)
-    }
 
     return (
         <div className={styles.container}>
@@ -117,36 +115,40 @@ export const UsersList = () => {
                 </button>
 
                 <div className={styles.threeDotsArea}></div>
-
-
             </div>
-            <ul className={styles.userListBody}>
-                {users?.map((user) => (
-                    <li key={user.id} className={styles.userListElement}>
-                        <div className={styles.userID}>
-                            <div className={styles.userIsBaned}>
-                                {user.userBan ? <Icon iconId={"icon-cancel"}/> : ''}
-                            </div>
-                            {user.id}
-                        </div>
-                        <div className={styles.profileLink}>{user.email}</div>
-                        <div className={styles.username}>{user.userName}</div>
-                        <div className={styles.dateAdded}>{formatToDDMMYYYY(user.createdAt)}</div>
-                        <div className={styles.threeDotsArea}>
-                            <ThreeDotsMenu userId={user.id} />
-                        </div>
-                    </li>
-                ))}
-            </ul>
-            <div className={styles.userListPagination}>
-                <Pagination
-                    totalItems={totalItems}
-                    itemsPerPage={itemsPerPage}
-                    currentPage={currentPage}
-                    onPageChange={handlePageChange}
-                    onSelectChange={handlePageSizeChange}
-                />
-            </div>
+            {loading ? (
+                <div className={styles.loadingOverlay}>Loading...</div>
+            ) : (
+                <>
+                    <ul className={styles.userListBody}>
+                        {users?.map((user) => (
+                            <li key={user.id} className={styles.userListElement}>
+                                <div className={styles.userID}>
+                                    <div className={styles.userIsBaned}>
+                                        {user.userBan ? <Icon iconId={"icon-cancel"}/> : ''}
+                                    </div>
+                                    {user.id}
+                                </div>
+                                <div className={styles.profileLink}>{user.email}</div>
+                                <div className={styles.username}>{user.userName}</div>
+                                <div className={styles.dateAdded}>{formatToDDMMYYYY(user.createdAt)}</div>
+                                <div className={styles.threeDotsArea}>
+                                    <ThreeDotsMenu userId={user.id} />
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                    <div className={styles.userListPagination}>
+                        <Pagination
+                            totalItems={totalItems}
+                            itemsPerPage={itemsPerPage}
+                            currentPage={currentPage}
+                            onPageChange={handlePageChange}
+                            onSelectChange={handlePageSizeChange}
+                        />
+                    </div>
+                </>
+            )}
         </div>
     )
 }
