@@ -12,8 +12,6 @@
   height: 100%;
   width: 100%;
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
   flex: 1 1 auto;
   margin: 0 94px;
@@ -22,5 +20,10 @@
     padding-left: 184px;
     margin: 0;
   }
+}
+
+.centered {
+  justify-content: center;
+  align-items: center;
 }
 
