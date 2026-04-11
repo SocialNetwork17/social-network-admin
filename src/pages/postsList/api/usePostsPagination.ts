@@ -12,6 +12,11 @@ export const usePostsPagination = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [currentCursor, setCurrentCursor] = useState<number | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  const addPost = useCallback((newPost: Post) => {
+    setPosts((prev) => [newPost, ...prev]);
+  }, []);
 
   const { data, loading, error, networkStatus, fetchMore } = useQuery<
     GetAllPostsQuery,
@@ -22,6 +27,7 @@ export const usePostsPagination = () => {
       endCursorPostId: null,
       sortBy: "createdAt",
       sortDirection: SortDirection.Desc,
+      searchTerm: searchTerm || undefined,
     },
     notifyOnNetworkStatusChange: true,
   });
@@ -120,5 +126,7 @@ export const usePostsPagination = () => {
     isLoadingMore,
     hasMore,
     loadMore: { triggerRef: observerTarget },
+    setSearchTerm,
+    addPost
   };
 };

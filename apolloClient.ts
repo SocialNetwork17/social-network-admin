@@ -15,7 +15,10 @@ const httpLink = new HttpLink({
 });
 
 const wsLink = new GraphQLWsLink(createClient({
-    url: 'ws://inctagram.work/api/v1/subscriptions',
+    url: 'wss://inctagram.work/api/v1/subscriptions',
+    connectionParams: {
+        Authorization: `Basic ${credentials}`,
+    },
 }));
 
 // The split function takes three parameters:
