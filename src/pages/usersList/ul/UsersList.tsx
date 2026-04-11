@@ -19,11 +19,12 @@ export const UsersList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(8);
     const [searchTerm, setSearchTerm] = useState('');
-    // сортировка
+    const [statusFilter, setStatusFilter] = useState<UserBlockStatus>(UserBlockStatus.All);
+
     const [sortBy, setSortBy] = useState<SortField>('createdAt')
     const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.Desc)
 
-    const { data, loading, error } = useQuery<GetUsersQuery, GetUsersQueryVariables>(
+    const { data, loading, error, refetch } = useQuery<GetUsersQuery, GetUsersQueryVariables>(
         GET_USERS,
         {
             variables: {
@@ -32,13 +33,12 @@ export const UsersList = () => {
                 sortBy,
                 sortDirection,
                 searchTerm: searchTerm || undefined,
-                statusFilter: UserBlockStatus.All,
+                statusFilter: statusFilter,
             },
             fetchPolicy: 'cache-first',
         }
     );
 
-    // сортировка - общая функция
     const handleSort = (field: SortField, defaultDirection: SortDirection) => {
         setCurrentPage(1)
 
@@ -56,13 +56,15 @@ export const UsersList = () => {
     const users = data?.getUsers?.users || [];
 
     const optionsOfBan = [
-        { id: '1', label: 'Not selected'},
-        { id: '2', label: 'Blocked'},
-        { id: '3', label: 'Not Blocked'},
+        { id: UserBlockStatus.All, label: 'Not selected'},
+        { id: UserBlockStatus.Blocked, label: 'Blocked'},
+        { id: UserBlockStatus.Unblocked, label: 'Not Blocked'},
     ]
 
     const handleSelect = (option: BaseOption) => {
-        console.log('Selected:', option)
+        setStatusFilter(option.id as UserBlockStatus);
+        refetch();
+        setCurrentPage(1);
     }
 
     const handlePageChange = (page: number) => {
@@ -71,12 +73,15 @@ export const UsersList = () => {
 
     const handlePageSizeChange = (option: BaseOption) => {
         setItemsPerPage(parseInt(option.label));
-        setCurrentPage(1); // Сброс на первую страницу
+        setCurrentPage(1);
+    };
+
+    const handleSearch = (value: string) => {
+        setSearchTerm(value);
+        setCurrentPage(1);
     };
 
     const pagination = data?.getUsers?.pagination;
-
-    // Общее количество элементов для пагинации
     const totalItems = pagination?.totalCount || 0;
 
     return (
@@ -133,7 +138,7 @@ export const UsersList = () => {
                                 <div className={styles.username}>{user.userName}</div>
                                 <div className={styles.dateAdded}>{formatToDDMMYYYY(user.createdAt)}</div>
                                 <div className={styles.threeDotsArea}>
-                                    <ThreeDotsMenu userId={user.id} />
+                                    <ThreeDotsMenu userId={user.id} isBanned={!!user.userBan}/>
                                 </div>
                             </li>
                         ))}

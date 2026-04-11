@@ -1,0 +1,37 @@
+.container {
+  width: 100%;
+}
+
+.description {
+  margin: 0 0 16px 0;
+  color: #aaa;
+  font-size: 14px;
+}
+
+.textarea {
+  width: 100%;
+  padding: 8px 12px;
+  margin-bottom: 20px;
+  background: #1a1a1a;
+  border: 1px solid #3a3a3a;
+  color: #fff;
+  border-radius: 4px;
+  resize: vertical;
+  font-family: inherit;
+
+  &:focus {
+    outline: none;
+    border-color: #4a90e2;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.buttonsContainer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}

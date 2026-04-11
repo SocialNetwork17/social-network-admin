@@ -18,3 +18,18 @@ export type RemoveUserMutationVariables = Types.Exact<{
 
 
 export type RemoveUserMutation = { __typename?: 'Mutation', removeUser: boolean };
+
+export type BanUserMutationVariables = Types.Exact<{
+  userId: Types.Scalars['Int']['input'];
+  banReason: Types.Scalars['String']['input'];
+}>;
+
+
+export type BanUserMutation = { __typename?: 'Mutation', banUser: boolean };
+
+export type UnbanUserMutationVariables = Types.Exact<{
+  userId: Types.Scalars['Int']['input'];
+}>;
+
+
+export type UnbanUserMutation = { __typename?: 'Mutation', unbanUser: boolean };
