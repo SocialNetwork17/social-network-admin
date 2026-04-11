@@ -15,9 +15,14 @@ const httpLink = new HttpLink({
 });
 
 const wsLink = new GraphQLWsLink(createClient({
-    url: 'wss://inctagram.work/api/v1/subscriptions',
+    url: 'wss://inctagram.work/api/v1/graphql',
     connectionParams: {
         Authorization: `Basic ${credentials}`,
+    },
+    on: {
+        connected: () => console.log('✅ WS connected'),
+        closed: (e) => console.log('❌ WS closed', e),
+        error: (e) => console.log('❌ WS error', e),
     },
 }));
 
