@@ -1,7 +1,8 @@
 'use client'
-import React, { ChangeEvent, useEffect, useState, KeyboardEvent } from 'react'
+import React, { ChangeEvent, useEffect, useState, KeyboardEvent, useCallback } from 'react'
 import styles from './SearchInput.module.scss'
 import { IconButton } from '../IconButton/IconButton'
+import debounce from 'lodash/debounce'
 
 type Props = {
   placeholder: string
@@ -17,11 +18,16 @@ export const SearchInput = ((props: Props) => {
   const [value, setValue] = useState<string>('')
   const [hasError, setHasError] = useState(!!error)
 
+  const debouncedSearch = useCallback(
+      debounce((val: string) => onSearch?.(val), 500),
+      [onSearch]
+  )
+
   const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     const newValue = event.currentTarget.value
     setValue(newValue)
     error && setHasError(false)
-    onSearch?.(newValue.trim())
+    debouncedSearch(newValue.trim())
   }
 
   const handleSearch = () => {
