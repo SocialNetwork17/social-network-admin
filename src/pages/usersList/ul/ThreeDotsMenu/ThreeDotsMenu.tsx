@@ -1,12 +1,13 @@
 'use client'
 
-import React, { useState, useRef } from 'react'
+import { useRef, useState } from 'react'
 import s from './ThreeDotsMenu.module.scss'
 import {IconButton} from "@/shared/ul/IconButton/IconButton";
 import {DropdownMenu} from "@/pages/usersList/ul/ThreeDotsMenu/DropdownMenu/DropdownMenu";
 import {useClickOutside} from "@/pages/usersList/ul/ThreeDotsMenu/DropdownMenu/useClickOutside";
 import {useModal} from "@/widgets/modal/model/modal.context";
 import { deleteUserModalAC} from "@/widgets/modal/model/modal.types";
+import { useRouter } from 'next/navigation'
 
 type ThreeDotsMenuProps = {
     userId: number
@@ -14,8 +15,9 @@ type ThreeDotsMenuProps = {
 
 export const ThreeDotsMenu = ({ userId }: ThreeDotsMenuProps) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const router = useRouter()
 
-    const {pushModal, popModal} = useModal()
+    const {pushModal} = useModal()
 
     // Закрытие меню при клике снаружи
     const menuRef = useRef<HTMLDivElement>(null)
@@ -45,7 +47,7 @@ export const ThreeDotsMenu = ({ userId }: ThreeDotsMenuProps) => {
 
     const handleMoreInfo = () => {
         setIsMenuOpen(false)
-
+        router.push(`/admin/users?userId=${userId}`)
     }
 
     return (

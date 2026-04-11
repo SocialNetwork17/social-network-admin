@@ -2,7 +2,7 @@
 
 import React from 'react'
 import s from './Sidebar.module.scss'
-import { Icon } from '@/shared/ui/Icon/Icon'
+import { Icon } from '@/shared/ul/Icon/Icon'
 
 interface SidebarUIProps {
   mainItems?: React.ReactNode

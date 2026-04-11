@@ -7,6 +7,7 @@ import { usePostsPagination } from "../api/usePostsPagination";
 import { SearchInput } from "@/shared/ul/SearchInput/SearchInput";
 import { usePostsSubscription } from "../api/usePostsSubscription";
 import { Post } from "@/types";
+import { Spinner } from "@/shared/ul/Spinner/Spinner";
 
 export const PostList = () => {
     const {
@@ -66,4 +67,20 @@ export const PostList = () => {
             )}
         </div>
     );
+  return (
+    <div className={styles.container}>
+      {posts.length > 0 && <PostsWithText posts={posts} />}
+      {isLoadingMore && (
+        <div className={styles.loader}>
+          <Spinner width={50} height={50} />
+        </div>
+      )}
+      {hasMore && posts.length > 0 && (
+        <div ref={loadMore.triggerRef} className={styles.observerTrigger} />
+      )}
+      {!hasMore && !isLoadingMore && posts.length !== 0 && (
+        <div className={styles.endMessage}>🎉 Вы просмотрели все посты!</div>
+      )}
+    </div>
+  );
 };
