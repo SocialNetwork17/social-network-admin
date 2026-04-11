@@ -18,8 +18,10 @@ export const SearchInput = ((props: Props) => {
   const [hasError, setHasError] = useState(!!error)
 
   const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    setValue(event.currentTarget.value)
+    const newValue = event.currentTarget.value
+    setValue(newValue)
     error && setHasError(false)
+    onSearch?.(newValue.trim())
   }
 
   const handleSearch = () => {
