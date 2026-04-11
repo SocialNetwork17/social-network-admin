@@ -53,34 +53,18 @@ export const PostList = () => {
             {posts.length > 0 && <PostsWithText posts={posts} />}
 
             {isLoadingMore && (
-                <div className={styles.loader}>Загрузка постов...</div>
+                <div className={styles.loader}>
+                    <Spinner width={50} height={50} />
+                </div>
             )}
 
             {hasMore && posts.length > 0 && (
                 <div ref={loadMore.triggerRef} className={styles.observerTrigger} />
             )}
 
-            {!hasMore && posts.length === 0 && (
-                <div className={styles.endMessage}>
-                    🎉 Вы просмотрели все посты!
-                </div>
+            {!hasMore && !isLoadingMore && posts.length !== 0 && (
+                <div className={styles.endMessage}>🎉 Вы просмотрели все посты!</div>
             )}
         </div>
     );
-  return (
-    <div className={styles.container}>
-      {posts.length > 0 && <PostsWithText posts={posts} />}
-      {isLoadingMore && (
-        <div className={styles.loader}>
-          <Spinner width={50} height={50} />
-        </div>
-      )}
-      {hasMore && posts.length > 0 && (
-        <div ref={loadMore.triggerRef} className={styles.observerTrigger} />
-      )}
-      {!hasMore && !isLoadingMore && posts.length !== 0 && (
-        <div className={styles.endMessage}>🎉 Вы просмотрели все посты!</div>
-      )}
-    </div>
-  );
 };
