@@ -52,6 +52,10 @@ export const PostList = () => {
 
             {posts.length > 0 && <PostsWithText posts={posts} />}
 
+            {!loading && !isLoadingMore && posts.length === 0 && (
+                <div className={styles.notFound}>No users found</div>
+            )}
+
             {isLoadingMore && (
                 <div className={styles.loader}>
                     <Spinner width={50} height={50} />

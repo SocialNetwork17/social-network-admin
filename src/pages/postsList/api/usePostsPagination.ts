@@ -50,10 +50,14 @@ export const usePostsPagination = () => {
       setHasMore(true);
     }
 
-    // Важно для первой загрузки так как при data undefined
-    if (fetchedPosts.length > 0) {
-      setPosts(fetchedPosts);
-      setCurrentCursor(fetchedPosts[fetchedPosts.length - 1].id);
+    if (data !== undefined) {
+      if (fetchedPosts.length > 0) {
+        setPosts(fetchedPosts);
+        setCurrentCursor(fetchedPosts[fetchedPosts.length - 1].id);
+      } else {
+        setPosts([]);
+        setHasMore(false);
+      }
     }
   }, [data]);
 
