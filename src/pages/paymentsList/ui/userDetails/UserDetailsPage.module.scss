@@ -1,0 +1,206 @@
+@use '../../../../styles/abstract/index' as styles;
+@use '../../../../styles/base/typography' as typo;
+
+.container {
+  width: 100%;
+  align-self: stretch;
+  margin-top: 24px;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: none;
+  background: transparent;
+  color: styles.palette('light', 300);
+  cursor: pointer;
+  padding: 0;
+  @include typo.text-regular-14;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  padding: 24px 0 24px;
+}
+
+.avatarWrapper {
+  flex: 0 0 60px;
+}
+
+.avatar,
+.avatarFallback {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+
+.avatar {
+  object-fit: cover;
+}
+
+.avatarFallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: styles.palette('dark', 100);
+  color: styles.palette('light', 100);
+  @include typo.large-text;
+}
+
+.userName {
+  display: flex;
+  flex-direction: column;
+}
+
+
+.info {
+  display: flex;
+  flex-direction: row;
+  gap: 80px;
+}
+
+.title {
+  margin-bottom: 16px;
+  color: styles.palette('light', 100);
+  @include typo.h1;
+}
+
+.link {
+  color: styles.palette('light', 300);
+}
+
+
+.metaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: styles.palette('light', 100);
+  @include typo.text-regular-14;
+}
+
+.metaLabel {
+  color: styles.palette('light', 900);
+}
+
+
+.content {
+  margin-top: 24px;
+}
+
+.photosSection {
+  margin-bottom: 32px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.sectionTitle {
+  color: styles.palette('light', 100);
+  @include typo.h2;
+}
+
+.sectionCount {
+  min-width: 32px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: styles.palette('dark', 500);
+  color: styles.palette('light', 100);
+  text-align: center;
+  @include typo.text-small-semi;
+}
+
+.photosGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.photoCard {
+  overflow: hidden;
+  border: 1px solid styles.palette('dark', 100);
+  background: styles.palette('dark', 500);
+  aspect-ratio: 1;
+}
+
+.photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tabs {
+  display: flex;
+  justify-content: space-around;
+  gap: 12px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid styles.palette('dark', 100);
+
+}
+
+.tab {
+  all: unset;
+  background: transparent;
+  color: styles.palette('light', 100);
+  padding: 8px 16px;
+  cursor: pointer;
+  @include typo.text-regular-14;
+  width: 245px;
+  text-align:  center;
+}
+
+.activeTab {
+  border-bottom: 2px solid styles.palette('accent', 500);
+  color: styles.palette('accent', 300);
+}
+
+.tableWrapper {
+  border: 1px solid styles.palette('dark', 100);
+}
+
+.tableRow {
+  display: grid;
+  gap: 16px;
+  padding: 14px 24px;
+  border-top: 1px solid styles.palette('dark', 100);
+  color: styles.palette('light', 100);
+  @include typo.text-regular-14;
+}
+
+.tableHead {
+  background: styles.palette('dark', 500);
+  @include typo.h3;
+  font-size: 14px;
+}
+
+.paymentsTable {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.followsTable {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.emptyState,
+.status {
+  min-height: 240px;
+  width: 100%;
+  padding: 24px;
+  color: styles.palette('light', 100);
+  @include typo.text-regular-14;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination {
+  margin-top: 24px;
+}
