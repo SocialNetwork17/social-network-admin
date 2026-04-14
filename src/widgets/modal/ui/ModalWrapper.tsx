@@ -24,6 +24,8 @@ export const ModalWrapper = () => {
             console.log(modal.payload.title)
         switch (modal.type) {
             case 'DELETE_USER':
+            case 'BAN_USER':
+            case 'UNBAN_USER':
             // case 'CONFIRM_REGISTRATION':
             // case 'CANCEL_CREATE_POST':
             // case "CANCEL_EDIT_POST":
