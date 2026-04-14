@@ -5,19 +5,27 @@ import { IconButton } from '../IconButton/IconButton'
 
 type Props = {
   placeholder: string
-  error?: boolean
+  value?: string
+  onValueChange?: (value: string) => void
+    error?: boolean
   errorText?: string
   disabled?: boolean
 }
 
 export const SearchInput = memo((props: Props) => {
-  const { placeholder, error, errorText, disabled } = props
+  const { placeholder, value, onValueChange, error, errorText, disabled } = props
 
-  const [value, setValue] = useState<string>('')
+  const [internalValue, setInternalValue] = useState<string>(value ?? '')
   const [hasError, setHasError] = useState(!!error)
 
   const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    setValue(event.currentTarget.value)
+    const nextValue = event.currentTarget.value
+
+    if (value === undefined) {
+      setInternalValue(nextValue)
+    }
+
+    onValueChange?.(nextValue)
     error && setHasError(false)
   }
 
@@ -28,13 +36,19 @@ export const SearchInput = memo((props: Props) => {
     setHasError(!!error)
   }, [error])
 
+  useEffect(() => {
+    if (value !== undefined) {
+      setInternalValue(value)
+    }
+  }, [value])
+
   const inputClassname = hasError ? `${styles.input} ${styles.errorInput}` : `${styles.input}`
 
   return (
     <div className={styles.inputContainer}>
       <div className={styles.inputWrapper}>
         <input
-          value={value}
+          value={value ?? internalValue}
           className={inputClassname}
           type={'text'}
           onChange={onChangeHandler}

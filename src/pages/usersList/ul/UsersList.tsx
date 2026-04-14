@@ -6,23 +6,33 @@ import {Icon} from "@/shared/ul/Icon/Icon";
 import {SearchInput} from "@/shared/ul/SearchInput/SearchInput";
 import {BaseOption, SelectBox} from "@/shared/ul/select-box/SelectBox";
 import { ThreeDotsMenu } from './ThreeDotsMenu/ThreeDotsMenu';
-import {useState} from "react";
-import {useQuery} from "@apollo/client/react";
-import {GET_USERS} from "@/pages/usersList/api/users";
-import {formatToDDMMYYYY} from "@/shared/utils/dateFormat";
-import {GetUsersQuery, GetUsersQueryVariables} from "@/pages/usersList/api/users.generated";
-import {SortDirection, UserBlockStatus} from '@/types';
+import { useEffect, useState } from "react";
+import { useQuery } from "@apollo/client/react";
+import { GET_USERS } from "@/pages/usersList/api/users";
+import { formatToDDMMYYYY } from "@/shared/utils/dateFormat";
+import { GetUsersQuery, GetUsersQueryVariables } from "@/pages/usersList/api/users.generated";
+import { SortDirection, UserBlockStatus } from '@/types';
 
 type SortField = 'createdAt' | 'userName'
 
 export const UsersList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(8);
+    const [searchValue, setSearchValue] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState<UserBlockStatus>(UserBlockStatus.All);
+    const [sortBy, setSortBy] = useState<SortField>('createdAt');
+    const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.Desc);
 
-    const [sortBy, setSortBy] = useState<SortField>('createdAt')
-    const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.Desc)
+    // Дебаунс для поиска
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            setSearchTerm(searchValue.trim());
+            setCurrentPage(1);
+        }, 400);
+
+        return () => clearTimeout(timeoutId);
+    }, [searchValue]);
 
     const { data, loading, error, refetch } = useQuery<GetUsersQuery, GetUsersQueryVariables>(
         GET_USERS,
@@ -39,33 +49,37 @@ export const UsersList = () => {
         }
     );
 
+    // Функция сортировки
     const handleSort = (field: SortField, defaultDirection: SortDirection) => {
-        setCurrentPage(1)
+        setCurrentPage(1);
 
         if (sortBy === field) {
             setSortDirection(prev =>
                 prev === SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc
-            )
-            return
+            );
+            return;
         }
 
-        setSortBy(field)
-        setSortDirection(defaultDirection)
-    }
+        setSortBy(field);
+        setSortDirection(defaultDirection);
+    };
 
     const users = data?.getUsers?.users || [];
+    const pagination = data?.getUsers?.pagination;
+    const totalItems = pagination?.totalCount || 0;
 
+    // Опции для фильтра бана
     const optionsOfBan = [
-        { id: UserBlockStatus.All, label: 'Not selected'},
-        { id: UserBlockStatus.Blocked, label: 'Blocked'},
-        { id: UserBlockStatus.Unblocked, label: 'Not Blocked'},
-    ]
+        { id: UserBlockStatus.All, label: 'Not selected' },
+        { id: UserBlockStatus.Blocked, label: 'Blocked' },
+        { id: UserBlockStatus.Unblocked, label: 'Not Blocked' },
+    ];
 
     const handleSelect = (option: BaseOption) => {
         setStatusFilter(option.id as UserBlockStatus);
-        refetch();
         setCurrentPage(1);
-    }
+        refetch();
+    };
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -76,19 +90,29 @@ export const UsersList = () => {
         setCurrentPage(1);
     };
 
-    const handleSearch = (value: string) => {
-        setSearchTerm(value);
-        setCurrentPage(1);
+    const handleSearchChange = (value: string) => {
+        setSearchValue(value);
     };
 
-    const pagination = data?.getUsers?.pagination;
-    const totalItems = pagination?.totalCount || 0;
+    const handleUserAction = () => {
+        refetch();
+    };
+
+    if (loading && !data) {
+        return <div className={styles.loadingOverlay}>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>Error: {error.message}</div>;
+    }
 
     return (
         <div className={styles.container}>
             <div className={styles.userTop}>
                 <SearchInput
                     placeholder={"Search"}
+                    value={searchValue}
+                    onValueChange={handleSearchChange}
                 />
                 <SelectBox
                     placeholder={"Not selected"}
@@ -107,7 +131,7 @@ export const UsersList = () => {
                     onClick={() => handleSort('userName', SortDirection.Asc)}
                 >
                     Username
-                    <Icon iconId={"sortingUser"} size={12}  viewBox="0 0 8 12"/>
+                    <Icon iconId={"sortingUser"} size={12} viewBox="0 0 8 12"/>
                 </button>
 
                 <button
@@ -116,11 +140,12 @@ export const UsersList = () => {
                     onClick={() => handleSort('createdAt', SortDirection.Desc)}
                 >
                     Date added
-                    <Icon iconId={"sortingUser"} size={12}  viewBox="0 0 8 12"/>
+                    <Icon iconId={"sortingUser"} size={12} viewBox="0 0 8 12"/>
                 </button>
 
                 <div className={styles.threeDotsArea}></div>
             </div>
+
             {loading ? (
                 <div className={styles.loadingOverlay}>Loading...</div>
             ) : (
@@ -130,7 +155,7 @@ export const UsersList = () => {
                             <li key={user.id} className={styles.userListElement}>
                                 <div className={styles.userID}>
                                     <div className={styles.userIsBaned}>
-                                        {user.userBan ? <Icon iconId={"icon-cancel"}/> : ''}
+                                        {user.userBan ? <Icon iconId={"icon-cancel"} /> : ''}
                                     </div>
                                     {user.id}
                                 </div>
@@ -138,7 +163,12 @@ export const UsersList = () => {
                                 <div className={styles.username}>{user.userName}</div>
                                 <div className={styles.dateAdded}>{formatToDDMMYYYY(user.createdAt)}</div>
                                 <div className={styles.threeDotsArea}>
-                                    <ThreeDotsMenu userId={user.id} userName={user.userName} isBanned={!!user.userBan}/>
+                                    <ThreeDotsMenu
+                                        userId={user.id}
+                                        userName={user.userName}
+                                        isBanned={!!user.userBan}
+                                        onUserAction={handleUserAction}
+                                    />
                                 </div>
                             </li>
                         ))}
@@ -155,5 +185,5 @@ export const UsersList = () => {
                 </>
             )}
         </div>
-    )
-}
+    );
+};
