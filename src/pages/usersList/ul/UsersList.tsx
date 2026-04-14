@@ -6,7 +6,7 @@ import {Icon} from "@/shared/ul/Icon/Icon";
 import {SearchInput} from "@/shared/ul/SearchInput/SearchInput";
 import {BaseOption, SelectBox} from "@/shared/ul/select-box/SelectBox";
 import { ThreeDotsMenu } from './ThreeDotsMenu/ThreeDotsMenu';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useQuery} from "@apollo/client/react";
 import {GET_USERS} from "@/pages/usersList/api/users";
 import {formatToDDMMYYYY} from "@/shared/utils/dateFormat";
@@ -18,12 +18,21 @@ type SortField = 'createdAt' | 'userName'
 export const UsersList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(8);
-    const [searchTerm, setSearchTerm] = useState('');
-    // сортировка
+    const [searchValue, setSearchValue] = useState('');
+    const [searchTerm, setSearchTerm] = useState(''); 
+
     const [sortBy, setSortBy] = useState<SortField>('createdAt')
     const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.Desc)
 
-    const { data, loading, error } = useQuery<GetUsersQuery, GetUsersQueryVariables>(
+    useEffect(() => {
+        const timeoutId = window.setTimeout(() => {
+            setSearchTerm(searchValue.trim())
+        }, 400)
+
+        return () => window.clearTimeout(timeoutId)
+    }, [searchValue])
+
+    const { data, previousData, loading, error } = useQuery<GetUsersQuery, GetUsersQueryVariables>(
         GET_USERS,
         {
             variables: {
@@ -38,9 +47,13 @@ export const UsersList = () => {
         }
     );
 
-    if (loading) return <div>Loading...</div>;
+    const resolvedData = data ?? previousData
 
-    const users = data?.getUsers?.users || [];
+    if (loading && !resolvedData) { //если идёт загрузка и данных вообще нет
+        return <div>Loading...</div>
+    }
+
+    const users = resolvedData?.getUsers?.users || [];
 
     const optionsOfBan = [
         { id: '1', label: 'Not selected'},
@@ -56,12 +69,17 @@ export const UsersList = () => {
         setCurrentPage(page);
     };
 
-    const handlePageSizeChange = (option: BaseOption) => {
-        setItemsPerPage(parseInt(option.label));
-        setCurrentPage(1); // Сброс на первую страницу
+    const handleSearchChange = (value: string) => { //обновляет searchValue сбрасывает страницу на первую
+        setSearchValue(value);
+        setCurrentPage(1);
     };
 
-    const pagination = data?.getUsers?.pagination;
+    const handlePageSizeChange = (option: BaseOption) => {
+        setItemsPerPage(parseInt(option.label));
+        setCurrentPage(1);
+    };
+
+    const pagination = resolvedData?.getUsers?.pagination; //данные о пагинации с сервера
 
     // Общее количество элементов для пагинации
     const totalItems = pagination?.totalCount || 0;
@@ -86,6 +104,8 @@ export const UsersList = () => {
             <div className={styles.userTop}>
                 <SearchInput
                     placeholder={"Search"}
+                    value={searchValue}
+                    onValueChange={handleSearchChange}
                 />
                 <SelectBox
                     placeholder={"Not selected"}
