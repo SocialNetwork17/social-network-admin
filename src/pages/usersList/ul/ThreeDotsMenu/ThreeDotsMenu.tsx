@@ -43,7 +43,11 @@ export const ThreeDotsMenu = ({ userId, isBanned = false, userName, onUserAction
         setIsMenuOpen(false)
         pushModal(banUserModalAC({
             title: 'Ban User',
-            description: `Are you sure to ban this user, ${userName || ''}?`,
+            description: (
+                <>
+                    Are you sure to ban this user, <strong>{userName || 'this user'}</strong>?
+                </>
+            ),
             userId: userId,
             onConfirm: async (banReason: string) => {
                 try {
@@ -53,10 +57,9 @@ export const ThreeDotsMenu = ({ userId, isBanned = false, userName, onUserAction
                             banReason: banReason
                         }
                     });
-                    onUserAction?.(); // Обновляем список пользователей
+                    onUserAction?.();
                 } catch (error) {
                     console.error('Error banning user:', error);
-                    // Здесь можно добавить уведомление об ошибке
                 }
             }
         }))
@@ -66,17 +69,20 @@ export const ThreeDotsMenu = ({ userId, isBanned = false, userName, onUserAction
         setIsMenuOpen(false)
         pushModal(unbanUserModalAC({
             title: 'Un-Ban user',
-            description: `Are you sure want to un-ban ${userName || ''}?`,
+            description: (
+                <>
+                    Are you sure want to un-ban <strong>{userName || 'this user'}</strong>?
+                </>
+            ),
             userId: userId,
             onConfirm: async () => {
                 try {
                     await unbanUser({
                         variables: { userId }
                     });
-                    onUserAction?.(); // Обновляем список пользователей
+                    onUserAction?.();
                 } catch (error) {
                     console.error('Error unbanning user:', error);
-                    // Здесь можно добавить уведомление об ошибке
                 }
             }
         }))
@@ -84,10 +90,13 @@ export const ThreeDotsMenu = ({ userId, isBanned = false, userName, onUserAction
 
     const handleDeleteUser = () => {
         setIsMenuOpen(false)
-        console.log('delete')
         pushModal(deleteUserModalAC({
             title: 'Delete User',
-            description: `Are you sure to delete user ${userName || ''}?`,
+            description: (
+                <>
+                    Are you sure to delete user <strong>{userName || 'this user'}</strong>?
+                </>
+            ),
             userId: userId
         }))
     }

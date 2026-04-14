@@ -35,23 +35,24 @@ export const UnbanUserModalContent = ({ modal }: Props) => {
             <p className={styles.description}>{modal.payload.description}</p>
             <div className={styles.buttonsContainer}>
                 <Button
-                    variant={'outline'}
-                    width={108}
-                    height={36}
-                    disabled={unbanning}
-                    onClick={handleUnbanConfirm}
-                >
-                    {unbanning ? 'Unbanning...' : 'YES'}
-                </Button>
-                <Button
                     variant={'primary'}
-                    width={108}
+                    width={130}
                     height={36}
                     disabled={unbanning}
                     onClick={popModal}
                 >
                     NO
                 </Button>
+                <Button
+                    variant={'outline'}
+                    width={130}
+                    height={36}
+                    disabled={unbanning}
+                    onClick={handleUnbanConfirm}
+                >
+                    {unbanning ? 'Unbanning...' : 'YES'}
+                </Button>
+
             </div>
         </div>
     );
