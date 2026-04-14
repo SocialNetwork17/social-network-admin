@@ -13,11 +13,12 @@ import {BAN_USER, UNBAN_USER} from "@/pages/usersList/api/users";
 
 type ThreeDotsMenuProps = {
     userId: number
+    userName?: string
     isBanned?: boolean
     onUserAction?: () => void
 }
 
-export const ThreeDotsMenu = ({ userId, isBanned = false, onUserAction }: ThreeDotsMenuProps) => {
+export const ThreeDotsMenu = ({ userId, isBanned = false, userName, onUserAction }: ThreeDotsMenuProps) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const router = useRouter()
 
@@ -42,7 +43,7 @@ export const ThreeDotsMenu = ({ userId, isBanned = false, onUserAction }: ThreeD
         setIsMenuOpen(false)
         pushModal(banUserModalAC({
             title: 'Ban User',
-            description: 'Please provide a reason for banning this user:',
+            description: `Are you sure to ban this user, ${userName || ''}?`,
             userId: userId,
             onConfirm: async (banReason: string) => {
                 try {
@@ -64,8 +65,8 @@ export const ThreeDotsMenu = ({ userId, isBanned = false, onUserAction }: ThreeD
     const handleUnbanUser = () => {
         setIsMenuOpen(false)
         pushModal(unbanUserModalAC({
-            title: 'Unban User',
-            description: 'Are you sure you want to unban this user?',
+            title: 'Un-Ban user',
+            description: `Are you sure want to un-ban ${userName || ''}?`,
             userId: userId,
             onConfirm: async () => {
                 try {
@@ -85,8 +86,8 @@ export const ThreeDotsMenu = ({ userId, isBanned = false, onUserAction }: ThreeD
         setIsMenuOpen(false)
         console.log('delete')
         pushModal(deleteUserModalAC({
-            title: 'Delete Post',
-            description: 'Are you sure you want to delete this post?',
+            title: 'Delete User',
+            description: `Are you sure to delete user ${userName || ''}?`,
             userId: userId
         }))
     }

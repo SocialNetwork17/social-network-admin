@@ -138,7 +138,7 @@ export const UsersList = () => {
                                 <div className={styles.username}>{user.userName}</div>
                                 <div className={styles.dateAdded}>{formatToDDMMYYYY(user.createdAt)}</div>
                                 <div className={styles.threeDotsArea}>
-                                    <ThreeDotsMenu userId={user.id} isBanned={!!user.userBan}/>
+                                    <ThreeDotsMenu userId={user.id} userName={user.userName} isBanned={!!user.userBan}/>
                                 </div>
                             </li>
                         ))}

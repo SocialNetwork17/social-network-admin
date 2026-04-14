@@ -22,7 +22,7 @@ export const DropdownMenu = ({ onDeleteUser, onBanUser, onMoreInfo, isBanned = f
             </button>
             <button onClick={onBanUser} className={`${s.dropdownItem} ${s.deleteItem}`} >
                 <span className={s.dropdownIcon}>
-                  <Icon iconId="icon-cancel" size={24}/>
+                  {isBanned ? <Icon iconId="icon-unban" size={24}/> : <Icon iconId="icon-cancel" size={24}/>}
                 </span>
                 <span className={s.dropdownText}>
                     {isBanned ? 'Unban User' : 'Ban in the system'}
