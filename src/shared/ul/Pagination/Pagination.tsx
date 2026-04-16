@@ -1,9 +1,8 @@
-'use client'
-
 import React, { useEffect, useMemo, useState } from 'react'
 import s from './Pagination.module.scss'
-import {SelectBox} from "@/shared/ul/select-box/SelectBox";
-import {Icon} from "@/shared/ul/Icon/Icon";
+import { Icon } from '@/shared/ul/Icon/Icon'
+import {SelectBox} from "@/shared/ul/Select-box/SelectBox";
+
 // import {Option} from "commander";
 
 export type Option = {

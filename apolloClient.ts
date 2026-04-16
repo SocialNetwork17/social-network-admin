@@ -1,4 +1,7 @@
-import {ApolloClient, InMemoryCache, HttpLink} from '@apollo/client';
+import {ApolloClient, InMemoryCache, HttpLink, ApolloLink} from '@apollo/client';
+import {GraphQLWsLink} from "@apollo/client/link/subscriptions";
+import {createClient} from "graphql-ws";
+import {OperationTypeNode} from "graphql/language";
 
 const credentials = btoa('admin@gmail.com:admin');
 //  Берём логин и пароль через двоеточие → кодируем в base64 → сохраняем в переменную.
@@ -11,7 +14,32 @@ const httpLink = new HttpLink({
     }
 });
 
+const wsLink = new GraphQLWsLink(createClient({
+    url: 'wss://inctagram.work/api/v1/graphql',
+    connectionParams: {
+        Authorization: `Basic ${credentials}`,
+    },
+    on: {
+        connected: () => console.log('✅ WS connected'),
+        closed: (e) => console.log('❌ WS closed', e),
+        error: (e) => console.log('❌ WS error', e),
+    },
+}));
+
+// The split function takes three parameters:
+//
+// * A function that's called for each operation to execute
+// * The Link to use for an operation if the function returns a "truthy" value
+// * The Link to use for an operation if the function returns a "falsy" value
+const splitLink = ApolloLink.split(
+    ({ operationType }) => {
+        return operationType === OperationTypeNode.SUBSCRIPTION;
+    },
+    wsLink,
+    httpLink
+);
+
 export const apolloClient = new ApolloClient({
-    link: httpLink,
+    link: splitLink,
     cache: new InMemoryCache(),
 });
