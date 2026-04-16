@@ -1,6 +1,5 @@
 import { gql } from '@apollo/client';
 
-// Используем обычный gql тег, типы будут подхвачены отдельно
 export const GET_USERS = gql`
     query GetUsers(
         $pageNumber: Int
@@ -23,15 +22,6 @@ export const GET_USERS = gql`
                 userName
                 email
                 createdAt
-                profile {
-                    firstName
-                    lastName
-                    avatars {
-                        url
-                        width
-                        height
-                    }
-                }
                 userBan {
                     reason
                     createdAt
@@ -50,5 +40,17 @@ export const GET_USERS = gql`
 export const REMOVE_USER = gql`
     mutation RemoveUser($userId: Int!) {
         removeUser(userId: $userId)
+    }
+`;
+
+export const BAN_USER = gql`
+    mutation BanUser($userId: Int!, $banReason: String!) {
+        banUser(userId: $userId, banReason: $banReason)
+    }
+`;
+
+export const UNBAN_USER = gql`
+    mutation UnbanUser($userId: Int!) {
+        unbanUser(userId: $userId)
     }
 `;

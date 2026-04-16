@@ -8,9 +8,10 @@ type DropdownMenuProps = {
     onDeleteUser: () => void
     onBanUser: () => void
     onMoreInfo: () => void
+    isBanned?: boolean
 }
 
-export const DropdownMenu = ({ onDeleteUser, onBanUser, onMoreInfo }: DropdownMenuProps) => {
+export const DropdownMenu = ({ onDeleteUser, onBanUser, onMoreInfo, isBanned = false }: DropdownMenuProps) => {
     return (
         <div className={s.dropdownMenu}>
             <button onClick={onDeleteUser} className={s.dropdownItem}>
@@ -21,9 +22,11 @@ export const DropdownMenu = ({ onDeleteUser, onBanUser, onMoreInfo }: DropdownMe
             </button>
             <button onClick={onBanUser} className={`${s.dropdownItem} ${s.deleteItem}`} >
                 <span className={s.dropdownIcon}>
-                  <Icon iconId="icon-cancel" size={24}/>
+                  {isBanned ? <Icon iconId="icon-unban" size={24}/> : <Icon iconId="icon-cancel" size={24}/>}
                 </span>
-                <span className={s.dropdownText}>Ban in the system</span>
+                <span className={s.dropdownText}>
+                    {isBanned ? 'Unban User' : 'Ban in the system'}
+                </span>
             </button>
             <button onClick={onMoreInfo} className={`${s.dropdownItem} ${s.deleteItem}`} >
                 <span className={s.dropdownIcon}>
