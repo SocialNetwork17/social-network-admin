@@ -13,7 +13,7 @@ export const usePostsPagination = () => {
   const [hasMore, setHasMore] = useState(true);
   const [currentCursor, setCurrentCursor] = useState<number | null>(null);
 
-  const { data, loading, error, networkStatus, fetchMore } = useQuery<
+  const { data, loading, error, networkStatus, fetchMore, refetch } = useQuery<
     GetAllPostsQuery,
     GetAllPostsQueryVariables
   >(POSTS_ALL_QUERY, {
@@ -120,5 +120,6 @@ export const usePostsPagination = () => {
     isLoadingMore,
     hasMore,
     loadMore: { triggerRef: observerTarget },
+    refetch
   };
 };

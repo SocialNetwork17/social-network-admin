@@ -7,8 +7,12 @@ import { usePostsPagination } from "../api/usePostsPagination";
 import { Spinner } from "@/shared/ul/Spinner/Spinner";
 
 export const PostList = () => {
-  const { posts, loading, error, isLoadingMore, hasMore, loadMore } =
+  const { posts, loading, error, isLoadingMore, hasMore, loadMore, refetch } =
     usePostsPagination();
+
+    const handleUserAction = () => {
+        refetch();
+    };
 
   if (loading && posts.length === 0) {
     return (
@@ -24,7 +28,7 @@ export const PostList = () => {
 
   return (
     <div className={styles.container}>
-      {posts.length > 0 && <PostsWithText posts={posts} />}
+      {posts.length > 0 && <PostsWithText posts={posts} onBanButtonAction={handleUserAction} />}
       {isLoadingMore && (
         <div className={styles.loader}>
           <Spinner width={50} height={50} />

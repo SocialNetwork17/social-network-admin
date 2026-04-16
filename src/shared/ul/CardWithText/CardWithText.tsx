@@ -3,15 +3,15 @@ import { Card } from "../Card/Card";
 import { UserName } from "../UserName/UserName";
 import { ExpandText } from "./ExpandText/ExpandText";
 import { Post } from "@/types";
-import { IconButton } from "../IconButton/IconButton";
+import { BanButton } from "./BanButton/BanButton";
 
 type Props = {
   post: Post;
-  onClick?: () => void;
+  onBanButtonAction?: () => void;
 };
 
 export const CardWithText = (props: Props) => {
-  const { post, onClick } = props;
+  const { post, onBanButtonAction } = props;
 
   const urls = post.images
     ? post.images
@@ -19,19 +19,16 @@ export const CardWithText = (props: Props) => {
         .filter((url): url is string => Boolean(url)) // фильтруем null/undefined и сужаем тип
     : [];
 
-  // todo
-  const onClickHandler = () => {
-    console.log(post.userBan ? true : false);
-  };
+    
 
   return (
     <div className={styles.container}>
-      <div className={`${styles.card} ${post.userBan?.createdAt ? styles.blocked : ""}`}>
+      <div className={`${styles.card} ${post.userBan?.__typename? styles.blocked : ""}`}>
         <Card images={urls} slider={true} />
       </div>
       <div className={styles.userInfo}>
         <UserName post={post} />
-        <IconButton onClick={onClickHandler} iconId={"icon-cancel"} size={24} />
+        <BanButton isBanned={!!post.userBan} userName={post.postOwner.userName} userId={post.ownerId} onBanButtonAction={onBanButtonAction}/>
       </div>
       <ExpandText post={post} />
     </div>
