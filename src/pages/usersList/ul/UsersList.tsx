@@ -69,6 +69,7 @@ export const UsersList = () => {
         setCurrentPage(page);
     };
 
+
     const handleSearchChange = (value: string) => { //обновляет searchValue сбрасывает страницу на первую
         setSearchValue(value);
         setCurrentPage(1);
