@@ -96,9 +96,6 @@ export const UsersList = () => {
         setCurrentPage(1);
     };
 
-    const handleSearchChange = (value: string) => {
-        setSearchValue(value);
-    };
 
     const handleUserAction = () => {
         refetch();
