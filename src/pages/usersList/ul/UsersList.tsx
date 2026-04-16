@@ -34,7 +34,7 @@ export const UsersList = () => {
         return () => clearTimeout(timeoutId);
     }, [searchValue]);
 
-    const { data, loading, error, refetch } = useQuery<GetUsersQuery, GetUsersQueryVariables>(
+    const { data, previousData, loading, error, refetch } = useQuery<GetUsersQuery, GetUsersQueryVariables>(
         GET_USERS,
         {
             variables: {
@@ -48,6 +48,8 @@ export const UsersList = () => {
             fetchPolicy: 'cache-first',
         }
     );
+
+    const resolvedData = data ?? previousData;
 
     // Функция сортировки
     const handleSort = (field: SortField, defaultDirection: SortDirection) => {
@@ -64,8 +66,8 @@ export const UsersList = () => {
         setSortDirection(defaultDirection);
     };
 
-    const users = data?.getUsers?.users || [];
-    const pagination = data?.getUsers?.pagination;
+    const users = resolvedData?.getUsers?.users || [];
+    const pagination = resolvedData?.getUsers?.pagination;
     const totalItems = pagination?.totalCount || 0;
 
     // Опции для фильтра бана
@@ -85,20 +87,23 @@ export const UsersList = () => {
         setCurrentPage(page);
     };
 
+
+    const handleSearchChange = (value: string) => { //обновляет searchValue сбрасывает страницу на первую
+        setSearchValue(value);
+        setCurrentPage(1);
+    };
+
     const handlePageSizeChange = (option: BaseOption) => {
         setItemsPerPage(parseInt(option.label));
         setCurrentPage(1);
     };
 
-    const handleSearchChange = (value: string) => {
-        setSearchValue(value);
-    };
 
     const handleUserAction = () => {
         refetch();
     };
 
-    if (loading && !data) {
+    if (loading && !resolvedData) {
         return <div className={styles.loadingOverlay}>Loading...</div>;
     }
 
@@ -146,44 +151,38 @@ export const UsersList = () => {
                 <div className={styles.threeDotsArea}></div>
             </div>
 
-            {loading ? (
-                <div className={styles.loadingOverlay}>Loading...</div>
-            ) : (
-                <>
-                    <ul className={styles.userListBody}>
-                        {users?.map((user) => (
-                            <li key={user.id} className={styles.userListElement}>
-                                <div className={styles.userID}>
-                                    <div className={styles.userIsBaned}>
-                                        {user.userBan ? <Icon iconId={"icon-cancel"} /> : ''}
-                                    </div>
-                                    {user.id}
-                                </div>
-                                <div className={styles.profileLink}>{user.email}</div>
-                                <div className={styles.username}>{user.userName}</div>
-                                <div className={styles.dateAdded}>{formatToDDMMYYYY(user.createdAt)}</div>
-                                <div className={styles.threeDotsArea}>
-                                    <ThreeDotsMenu
-                                        userId={user.id}
-                                        userName={user.userName}
-                                        isBanned={!!user.userBan}
-                                        onUserAction={handleUserAction}
-                                    />
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                    <div className={styles.userListPagination}>
-                        <Pagination
-                            totalItems={totalItems}
-                            itemsPerPage={itemsPerPage}
-                            currentPage={currentPage}
-                            onPageChange={handlePageChange}
-                            onSelectChange={handlePageSizeChange}
-                        />
-                    </div>
-                </>
-            )}
+            <ul className={styles.userListBody}>
+                {users?.map((user) => (
+                    <li key={user.id} className={styles.userListElement}>
+                        <div className={styles.userID}>
+                            <div className={styles.userIsBaned}>
+                                {user.userBan ? <Icon iconId={"icon-cancel"} /> : ''}
+                            </div>
+                            {user.id}
+                        </div>
+                        <div className={styles.profileLink}>{user.email}</div>
+                        <div className={styles.username}>{user.userName}</div>
+                        <div className={styles.dateAdded}>{formatToDDMMYYYY(user.createdAt)}</div>
+                        <div className={styles.threeDotsArea}>
+                            <ThreeDotsMenu
+                                userId={user.id}
+                                userName={user.userName}
+                                isBanned={!!user.userBan}
+                                onUserAction={handleUserAction}
+                            />
+                        </div>
+                    </li>
+                ))}
+            </ul>
+            <div className={styles.userListPagination}>
+                <Pagination
+                    totalItems={totalItems}
+                    itemsPerPage={itemsPerPage}
+                    currentPage={currentPage}
+                    onPageChange={handlePageChange}
+                    onSelectChange={handlePageSizeChange}
+                />
+            </div>
         </div>
     );
 };
