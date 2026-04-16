@@ -6,18 +6,27 @@ import {IconButton} from "@/shared/ul/IconButton/IconButton";
 import {DropdownMenu} from "@/pages/usersList/ul/ThreeDotsMenu/DropdownMenu/DropdownMenu";
 import {useClickOutside} from "@/pages/usersList/ul/ThreeDotsMenu/DropdownMenu/useClickOutside";
 import {useModal} from "@/widgets/modal/model/modal.context";
-import { deleteUserModalAC} from "@/widgets/modal/model/modal.types";
+import {banUserModalAC, deleteUserModalAC, unbanUserModalAC} from "@/widgets/modal/model/modal.types";
 import { useRouter } from 'next/navigation'
+import {useMutation} from "@apollo/client/react";
+import {BAN_USER, UNBAN_USER} from "@/pages/usersList/api/users";
 
 type ThreeDotsMenuProps = {
     userId: number
+    userName?: string
+    isBanned?: boolean
+    onUserAction?: () => void
 }
 
-export const ThreeDotsMenu = ({ userId }: ThreeDotsMenuProps) => {
+export const ThreeDotsMenu = ({ userId, isBanned = false, userName, onUserAction }: ThreeDotsMenuProps) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const router = useRouter()
 
     const {pushModal} = useModal()
+
+    // Мутации
+    const [banUser] = useMutation(BAN_USER);
+    const [unbanUser] = useMutation(UNBAN_USER);
 
     // Закрытие меню при клике снаружи
     const menuRef = useRef<HTMLDivElement>(null)
@@ -32,15 +41,62 @@ export const ThreeDotsMenu = ({ userId }: ThreeDotsMenuProps) => {
 
     const handleBanUser = () => {
         setIsMenuOpen(false)
+        pushModal(banUserModalAC({
+            title: 'Ban User',
+            description: (
+                <>
+                    Are you sure to ban this user, <strong>{userName || 'this user'}</strong>?
+                </>
+            ),
+            userId: userId,
+            onConfirm: async (banReason: string) => {
+                try {
+                    await banUser({
+                        variables: {
+                            userId,
+                            banReason: banReason
+                        }
+                    });
+                    onUserAction?.();
+                } catch (error) {
+                    console.error('Error banning user:', error);
+                }
+            }
+        }))
+    }
 
+    const handleUnbanUser = () => {
+        setIsMenuOpen(false)
+        pushModal(unbanUserModalAC({
+            title: 'Un-Ban user',
+            description: (
+                <>
+                    Are you sure want to un-ban <strong>{userName || 'this user'}</strong>?
+                </>
+            ),
+            userId: userId,
+            onConfirm: async () => {
+                try {
+                    await unbanUser({
+                        variables: { userId }
+                    });
+                    onUserAction?.();
+                } catch (error) {
+                    console.error('Error unbanning user:', error);
+                }
+            }
+        }))
     }
 
     const handleDeleteUser = () => {
         setIsMenuOpen(false)
-        console.log('delete')
         pushModal(deleteUserModalAC({
-            title: 'Delete Post',
-            description: 'Are you sure you want to delete this post?',
+            title: 'Delete User',
+            description: (
+                <>
+                    Are you sure to delete user <strong>{userName || 'this user'}</strong>?
+                </>
+            ),
             userId: userId
         }))
     }
@@ -63,9 +119,10 @@ export const ThreeDotsMenu = ({ userId }: ThreeDotsMenuProps) => {
 
             {isMenuOpen && (
                 <DropdownMenu
-                    onBanUser={handleBanUser}
+                    onBanUser={isBanned ? handleUnbanUser : handleBanUser}
                     onDeleteUser={handleDeleteUser}
                     onMoreInfo={handleMoreInfo}
+                    isBanned={isBanned}
                 />
             )}
         </div>

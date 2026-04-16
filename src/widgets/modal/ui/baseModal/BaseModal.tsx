@@ -1,6 +1,7 @@
 'use client'
 
-import {DeleteUserModalType
+import {
+    BanUserModalType, DeleteUserModalType, UnbanUserModalType
 } from "@/widgets/modal/model/modal.types";
 import styles from './BaseModal.module.scss'
 import {useModal} from "@/widgets/modal/model/modal.context";
@@ -9,9 +10,11 @@ import {IconButton} from "@/shared/ul/IconButton/IconButton";
 import {
     CancelDeleteUserModalContent
 } from "@/widgets/modal/ui/baseModal/cancelDeleteUserModalContent/CancelDeleteUserModalContent";
+import {BanUserModalContent} from "@/widgets/modal/ui/baseModal/BanUserModalContent/BanUserModalContent";
+import {UnbanUserModalContent} from "@/widgets/modal/ui/baseModal/UnbanUserModalContent/UnbanUserModalContent";
 
 type Props = {
-    modal: DeleteUserModalType
+    modal: DeleteUserModalType | BanUserModalType | UnbanUserModalType
 }
 
 export const BaseModal = ({modal}: Props) => {
@@ -21,8 +24,14 @@ export const BaseModal = ({modal}: Props) => {
     const currentContent = (): ReactNode | null => {
         switch (modal.type) {
             case "DELETE_USER":
-                console.log("DELETE_USER")
                 return <CancelDeleteUserModalContent modal={modal} />
+            case "BAN_USER":
+                console.log("BAN_USER")
+                return <BanUserModalContent modal={modal} />
+
+            case "UNBAN_USER":
+                console.log("UNBAN_USER")
+                return <UnbanUserModalContent modal={modal} />
             default:
                 return null
         }

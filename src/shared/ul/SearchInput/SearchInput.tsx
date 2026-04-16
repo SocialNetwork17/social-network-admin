@@ -6,34 +6,43 @@ import debounce from 'lodash/debounce'
 
 type Props = {
   placeholder: string
-  error?: boolean
+  value?: string
+  onValueChange?: (value: string) => void
+    error?: boolean
   errorText?: string
   disabled?: boolean
-  onSearch?: (value: string) => void
 }
 
 export const SearchInput = ((props: Props) => {
-  const { placeholder, error, errorText, disabled, onSearch } = props
+  const { placeholder, value, onValueChange, error, errorText, disabled } = props
 
-  const [value, setValue] = useState<string>('')
+  const [internalValue, setInternalValue] = useState<string>(value ?? '')
   const [hasError, setHasError] = useState(!!error)
 
   const debouncedSearch = useCallback(
-      debounce((val: string) => onSearch?.(val), 500),
-      [onSearch]
+      debounce((val: string) => onValueChange?.(val), 500),
+      [onValueChange]
   )
 
   const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    const newValue = event.currentTarget.value
-    setValue(newValue)
+    const nextValue = event.currentTarget.value
+
+    if (value === undefined) {
+      setInternalValue(nextValue)
+    }
+
     error && setHasError(false)
-    debouncedSearch(newValue.trim())
+    debouncedSearch(nextValue.trim())
   }
 
-  const handleSearch = () => {
-    if (value.trim() && onSearch) {
-      onSearch(value.trim())
+ const handleSearch = () => {
+    if (internalValue.trim() && onValueChange) {
+      onValueChange(internalValue.trim())
     }
+  }
+
+  const onClickHandler = () => {
+    handleSearch();
   }
 
   const onKeyPressHandler = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -42,13 +51,15 @@ export const SearchInput = ((props: Props) => {
     }
   }
 
-  const onClickHandler = () => {
-    handleSearch();
-  }
-
   useEffect(() => {
     setHasError(!!error)
   }, [error])
+
+  useEffect(() => {
+    if (value !== undefined) {
+      setInternalValue(value)
+    }
+  }, [value])
 
   const inputClassname = hasError ? `${styles.input} ${styles.errorInput}` : `${styles.input}`
 
@@ -56,7 +67,7 @@ export const SearchInput = ((props: Props) => {
     <div className={styles.inputContainer}>
       <div className={styles.inputWrapper}>
         <input
-          value={value}
+          value={value ?? internalValue}
           className={inputClassname}
           type={'text'}
           onChange={onChangeHandler}

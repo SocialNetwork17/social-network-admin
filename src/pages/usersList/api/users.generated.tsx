@@ -10,7 +10,7 @@ export type GetUsersQueryVariables = Types.Exact<{
 }>;
 
 
-export type GetUsersQuery = { __typename?: 'Query', getUsers: { __typename?: 'UsersPaginationModel', users: Array<{ __typename?: 'User', id: number, userName: string, email: string, createdAt: any, profile: { __typename?: 'Profile', firstName?: string | null, lastName?: string | null, avatars?: Array<{ __typename?: 'Avatar', url?: string | null, width?: number | null, height?: number | null }> | null }, userBan?: { __typename?: 'UserBan', reason: string, createdAt: any } | null }>, pagination: { __typename?: 'PaginationModel', page: number, pageSize: number, pagesCount: number, totalCount: number } } };
+export type GetUsersQuery = { __typename?: 'Query', getUsers: { __typename?: 'UsersPaginationModel', users: Array<{ __typename?: 'User', id: number, userName: string, email: string, createdAt: any, userBan?: { __typename?: 'UserBan', reason: string, createdAt: any } | null }>, pagination: { __typename?: 'PaginationModel', page: number, pageSize: number, pagesCount: number, totalCount: number } } };
 
 export type RemoveUserMutationVariables = Types.Exact<{
   userId: Types.Scalars['Int']['input'];
@@ -18,3 +18,18 @@ export type RemoveUserMutationVariables = Types.Exact<{
 
 
 export type RemoveUserMutation = { __typename?: 'Mutation', removeUser: boolean };
+
+export type BanUserMutationVariables = Types.Exact<{
+  userId: Types.Scalars['Int']['input'];
+  banReason: Types.Scalars['String']['input'];
+}>;
+
+
+export type BanUserMutation = { __typename?: 'Mutation', banUser: boolean };
+
+export type UnbanUserMutationVariables = Types.Exact<{
+  userId: Types.Scalars['Int']['input'];
+}>;
+
+
+export type UnbanUserMutation = { __typename?: 'Mutation', unbanUser: boolean };

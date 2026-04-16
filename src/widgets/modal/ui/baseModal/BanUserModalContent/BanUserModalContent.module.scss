@@ -1,0 +1,22 @@
+@use '../../../../../styles/base/typography' as typo;
+
+.description {
+  margin: 30px 0 0 0;
+  padding: 0 25px 18px;
+  //height: 100%;
+
+  @include typo.text-regular-16
+}
+
+.selectWrapper {
+  margin: 0 23px;
+
+}
+
+.buttonsContainer {
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 48px 0 36px 0;
+}

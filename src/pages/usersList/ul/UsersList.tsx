@@ -6,24 +6,35 @@ import {Icon} from "@/shared/ul/Icon/Icon";
 import {SearchInput} from "@/shared/ul/SearchInput/SearchInput";
 import {BaseOption, SelectBox} from "@/shared/ul/select-box/SelectBox";
 import { ThreeDotsMenu } from './ThreeDotsMenu/ThreeDotsMenu';
-import {useState} from "react";
-import {useQuery} from "@apollo/client/react";
-import {GET_USERS} from "@/pages/usersList/api/users";
-import {formatToDDMMYYYY} from "@/shared/utils/dateFormat";
-import {GetUsersQuery, GetUsersQueryVariables} from "@/pages/usersList/api/users.generated";
-import {SortDirection, UserBlockStatus} from '@/types';
+import { useEffect, useState } from "react";
+import { useQuery } from "@apollo/client/react";
+import { GET_USERS } from "@/pages/usersList/api/users";
+import { formatToDDMMYYYY } from "@/shared/utils/dateFormat";
+import { GetUsersQuery, GetUsersQueryVariables } from "@/pages/usersList/api/users.generated";
+import { SortDirection, UserBlockStatus } from '@/types';
 
 type SortField = 'createdAt' | 'userName'
 
 export const UsersList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(8);
+    const [searchValue, setSearchValue] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
-    // сортировка
-    const [sortBy, setSortBy] = useState<SortField>('createdAt')
-    const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.Desc)
+    const [statusFilter, setStatusFilter] = useState<UserBlockStatus>(UserBlockStatus.All);
+    const [sortBy, setSortBy] = useState<SortField>('createdAt');
+    const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.Desc);
 
-    const { data, loading, error } = useQuery<GetUsersQuery, GetUsersQueryVariables>(
+    // Дебаунс для поиска
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            setSearchTerm(searchValue.trim());
+            setCurrentPage(1);
+        }, 400);
+
+        return () => clearTimeout(timeoutId);
+    }, [searchValue]);
+
+    const { data, previousData, loading, error, refetch } = useQuery<GetUsersQuery, GetUsersQueryVariables>(
         GET_USERS,
         {
             variables: {
@@ -32,53 +43,72 @@ export const UsersList = () => {
                 sortBy,
                 sortDirection,
                 searchTerm: searchTerm || undefined,
-                statusFilter: UserBlockStatus.All,
+                statusFilter: statusFilter,
             },
             fetchPolicy: 'cache-first',
         }
     );
 
-    if (loading) return <div>Loading...</div>;
+    const resolvedData = data ?? previousData;
 
-    const users = data?.getUsers?.users || [];
+    // Функция сортировки
+    const handleSort = (field: SortField, defaultDirection: SortDirection) => {
+        setCurrentPage(1);
 
+        if (sortBy === field) {
+            setSortDirection(prev =>
+                prev === SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc
+            );
+            return;
+        }
+
+        setSortBy(field);
+        setSortDirection(defaultDirection);
+    };
+
+    const users = resolvedData?.getUsers?.users || [];
+    const pagination = resolvedData?.getUsers?.pagination;
+    const totalItems = pagination?.totalCount || 0;
+
+    // Опции для фильтра бана
     const optionsOfBan = [
-        { id: '1', label: 'Not selected'},
-        { id: '2', label: 'Blocked'},
-        { id: '3', label: 'Not Blocked'},
-    ]
+        { id: UserBlockStatus.All, label: 'Not selected' },
+        { id: UserBlockStatus.Blocked, label: 'Blocked' },
+        { id: UserBlockStatus.Unblocked, label: 'Not Blocked' },
+    ];
 
     const handleSelect = (option: BaseOption) => {
-        console.log('Selected:', option)
-    }
+        setStatusFilter(option.id as UserBlockStatus);
+        setCurrentPage(1);
+        refetch();
+    };
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
     };
 
-    const handlePageSizeChange = (option: BaseOption) => {
-        setItemsPerPage(parseInt(option.label));
-        setCurrentPage(1); // Сброс на первую страницу
+
+    const handleSearchChange = (value: string) => { //обновляет searchValue сбрасывает страницу на первую
+        setSearchValue(value);
+        setCurrentPage(1);
     };
 
-    const pagination = data?.getUsers?.pagination;
+    const handlePageSizeChange = (option: BaseOption) => {
+        setItemsPerPage(parseInt(option.label));
+        setCurrentPage(1);
+    };
 
-    // Общее количество элементов для пагинации
-    const totalItems = pagination?.totalCount || 0;
 
-    // сортировка - общая функция
-    const handleSort = (field: SortField, defaultDirection: SortDirection) => {
-        setCurrentPage(1)
+    const handleUserAction = () => {
+        refetch();
+    };
 
-        if (sortBy === field) {
-            setSortDirection(prev =>
-                prev === SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc
-            )
-            return
-        }
+    if (loading && !resolvedData) {
+        return <div className={styles.loadingOverlay}>Loading...</div>;
+    }
 
-        setSortBy(field)
-        setSortDirection(defaultDirection)
+    if (error) {
+        return <div>Error: {error.message}</div>;
     }
 
     return (
@@ -86,6 +116,8 @@ export const UsersList = () => {
             <div className={styles.userTop}>
                 <SearchInput
                     placeholder={"Search"}
+                    value={searchValue}
+                    onValueChange={handleSearchChange}
                 />
                 <SelectBox
                     placeholder={"Not selected"}
@@ -104,7 +136,7 @@ export const UsersList = () => {
                     onClick={() => handleSort('userName', SortDirection.Asc)}
                 >
                     Username
-                    <Icon iconId={"sortingUser"} size={12}  viewBox="0 0 8 12"/>
+                    <Icon iconId={"sortingUser"} size={12} viewBox="0 0 8 12"/>
                 </button>
 
                 <button
@@ -113,19 +145,18 @@ export const UsersList = () => {
                     onClick={() => handleSort('createdAt', SortDirection.Desc)}
                 >
                     Date added
-                    <Icon iconId={"sortingUser"} size={12}  viewBox="0 0 8 12"/>
+                    <Icon iconId={"sortingUser"} size={12} viewBox="0 0 8 12"/>
                 </button>
 
                 <div className={styles.threeDotsArea}></div>
-
-
             </div>
+
             <ul className={styles.userListBody}>
                 {users?.map((user) => (
                     <li key={user.id} className={styles.userListElement}>
                         <div className={styles.userID}>
                             <div className={styles.userIsBaned}>
-                                {user.userBan ? <Icon iconId={"icon-cancel"}/> : ''}
+                                {user.userBan ? <Icon iconId={"icon-cancel"} /> : ''}
                             </div>
                             {user.id}
                         </div>
@@ -133,7 +164,12 @@ export const UsersList = () => {
                         <div className={styles.username}>{user.userName}</div>
                         <div className={styles.dateAdded}>{formatToDDMMYYYY(user.createdAt)}</div>
                         <div className={styles.threeDotsArea}>
-                            <ThreeDotsMenu userId={user.id} />
+                            <ThreeDotsMenu
+                                userId={user.id}
+                                userName={user.userName}
+                                isBanned={!!user.userBan}
+                                onUserAction={handleUserAction}
+                            />
                         </div>
                     </li>
                 ))}
@@ -148,5 +184,5 @@ export const UsersList = () => {
                 />
             </div>
         </div>
-    )
-}
+    );
+};

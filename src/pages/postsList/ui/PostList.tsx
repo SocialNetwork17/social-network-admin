@@ -8,6 +8,7 @@ import { SearchInput } from "@/shared/ul/SearchInput/SearchInput";
 import { usePostsSubscription } from "../api/usePostsSubscription";
 import { Post } from "@/types";
 import { Spinner } from "@/shared/ul/Spinner/Spinner";
+import { useState } from "react";
 
 export const PostList = () => {
     const {
@@ -47,7 +48,7 @@ export const PostList = () => {
     return (
         <div className={styles.container}>
             <div className={styles.userTop}>
-                <SearchInput placeholder={"Search input"} onSearch={handleSearch} />
+                <SearchInput placeholder={"Search input"} onValueChange={handleSearch} />
             </div>
 
             {posts.length > 0 && <PostsWithText posts={posts} />}
