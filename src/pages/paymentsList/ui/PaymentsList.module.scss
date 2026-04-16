@@ -1,0 +1,153 @@
+@use '../../../styles/abstract' as styles;
+@use '../../../styles/base/typography' as typo;
+
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 64px 0 72px;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+
+  & > :first-child {
+    max-width: 420px;
+    width: 100%;
+  }
+}
+
+.tableWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.tableRow {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.5fr) minmax(140px, 1fr) minmax(120px, 0.8fr) minmax(140px, 1fr) minmax(140px, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 12px 24px;
+  border: 1px solid styles.palette('dark', 500);
+  border-top: none;
+  background: transparent;
+  @include typo.text-regular-14;
+}
+
+.tableHead {
+  background: styles.palette('dark', 500);
+  border-top: 1px solid styles.palette('dark', 500);
+  color: styles.palette('light', 100);
+  @include typo.h3;
+  font-size: 14px;
+}
+
+.sortButton {
+  border: none;
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: inherit;
+}
+
+.usernameColumn,
+.dateColumn,
+.amountColumn,
+.subscriptionColumn,
+.methodColumn {
+  min-width: 0;
+}
+
+.usernameColumn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatarFallback {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: styles.palette('dark', 300);
+  color: styles.palette('light', 100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @include typo.text-regular-14;
+}
+
+.emptyState,
+.status {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 180px;
+  color: styles.palette('light', 100);
+  @include typo.text-regular-16;
+}
+
+.emptyState {
+  border: 1px solid styles.palette('dark', 500);
+  border-top: none;
+}
+
+.pagination {
+  display: flex;
+  margin-top: 24px;
+  gap: 12px;
+  justify-content: flex-start;
+}
+
+.paginationButton {
+  min-width: 96px;
+  height: 36px;
+  padding: 0 16px;
+  border: 1px solid styles.palette('dark', 100);
+  border-radius: 2px;
+  background: transparent;
+  color: styles.palette('light', 100);
+  cursor: pointer;
+  @include typo.text-regular-14;
+
+  &:disabled {
+    color: styles.palette('light', 900);
+    border-color: styles.palette('dark', 300);
+    cursor: default;
+  }
+}
+
+@media (max-width: 1100px) {
+  .tableWrapper {
+    overflow-x: auto;
+  }
+
+  .tableRow {
+    min-width: 820px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding-top: 32px;
+  }
+
+  .topBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

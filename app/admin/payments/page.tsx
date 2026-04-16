@@ -1,6 +1,5 @@
-export default function Home() {
+import { PaymentsList } from '@/pages/paymentsList/ui/PaymentsList'
 
-    return (
-        <div> Payments List</div>
-    )
+export default function PaymentsPage() {
+  return <PaymentsList />
 }
