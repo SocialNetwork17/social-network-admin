@@ -4,7 +4,7 @@ import styles from './UsersList.module.scss'
 import Pagination from "@/shared/ul/Pagination/Pagination";
 import {Icon} from "@/shared/ul/Icon/Icon";
 import {SearchInput} from "@/shared/ul/SearchInput/SearchInput";
-import {BaseOption, SelectBox} from "@/shared/ul/select-box/SelectBox";
+import {BaseOption, SelectBox} from "@/shared/ul/Select-box/SelectBox";
 import { ThreeDotsMenu } from './ThreeDotsMenu/ThreeDotsMenu';
 import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client/react";
