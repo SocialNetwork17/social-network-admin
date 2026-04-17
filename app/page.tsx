@@ -1,10 +1,5 @@
-import {SignInForm} from "@/pages/signIn/ui/SignInForm";
+import { redirect } from 'next/navigation'
 
 export default function Home() {
-
-    return (
-        <div>
-            <SignInForm/>
-        </div>
-    )
+  redirect('/admin/login')
 }

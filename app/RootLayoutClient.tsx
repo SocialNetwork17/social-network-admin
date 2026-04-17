@@ -17,7 +17,7 @@ const LayoutContent = ({ children }: Props) => {
     const pathname = usePathname()
     const searchParams = useSearchParams()
     const { isLoggedIn } = useAuth()
-    const isAuthPage = pathname === '/'
+    const isAuthPage = pathname === '/admin/login'
     const isUserDetailsPage = pathname === '/admin/users' && !!searchParams?.get('userId')
 
     return (
