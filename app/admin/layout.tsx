@@ -1,18 +1,24 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/shared/auth/authContext'
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { isLoggedIn } = useAuth()
   const router = useRouter()
+  const pathname = usePathname()
+  const isLoginPage = pathname === '/admin/login'
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      router.push('/')
+    if (!isLoggedIn && !isLoginPage) {
+      router.replace('/admin/login')
     }
-  }, [isLoggedIn, router])
+  }, [isLoggedIn, isLoginPage, router])
+
+  if (isLoginPage) {
+    return <>{children}</>
+  }
 
   if (!isLoggedIn) {
     return (
