@@ -1,7 +1,8 @@
 'use client'
-import React, { ChangeEvent, memo, useEffect, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState, KeyboardEvent, useCallback } from 'react'
 import styles from './SearchInput.module.scss'
 import { IconButton } from '../IconButton/IconButton'
+import debounce from 'lodash/debounce'
 
 type Props = {
   placeholder: string
@@ -12,11 +13,16 @@ type Props = {
   disabled?: boolean
 }
 
-export const SearchInput = memo((props: Props) => {
+export const SearchInput = ((props: Props) => {
   const { placeholder, value, onValueChange, error, errorText, disabled } = props
 
   const [internalValue, setInternalValue] = useState<string>(value ?? '')
   const [hasError, setHasError] = useState(!!error)
+
+  const debouncedSearch = useCallback(
+      debounce((val: string) => onValueChange?.(val), 500),
+      [onValueChange]
+  )
 
   const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     const nextValue = event.currentTarget.value
@@ -25,12 +31,25 @@ export const SearchInput = memo((props: Props) => {
       setInternalValue(nextValue)
     }
 
-    onValueChange?.(nextValue)
     error && setHasError(false)
+    debouncedSearch(nextValue.trim())
   }
 
-  const onClickHandler = () => {}
-  const onKeyPressHandler = () => {}
+ const handleSearch = () => {
+    if (internalValue.trim() && onValueChange) {
+      onValueChange(internalValue.trim())
+    }
+  }
+
+  const onClickHandler = () => {
+    handleSearch();
+  }
+
+  const onKeyPressHandler = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleSearch();
+    }
+  }
 
   useEffect(() => {
     setHasError(!!error)

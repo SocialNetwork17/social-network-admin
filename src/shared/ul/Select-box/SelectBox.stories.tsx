@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
-import SelectBox, { BaseOption } from './SelectBox'
+import { SelectBox, BaseOption } from './SelectBox'
 
 const meta = {
-  title: 'shared/ui/SelectBox',
+  title: 'shared/ul/SelectBox',
   component: SelectBox,
   parameters: {
     layout: 'centered',

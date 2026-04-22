@@ -7,7 +7,7 @@ import { Button } from "@/shared/ul/Button/Button";
 import { useModal } from "@/widgets/modal/model/modal.context";
 import { useSnackbar } from "@/widgets/snackbar/model/snackbar.context";
 import { useBanUser } from "@/pages/usersList/hooks/useBanUser";
-import { SelectBox, BaseOption } from "@/shared/ul/select-box/SelectBox";
+import { SelectBox, BaseOption } from "@/shared/ul/Select-box/SelectBox";
 
 type Props = {
     modal: BanUserModalType
