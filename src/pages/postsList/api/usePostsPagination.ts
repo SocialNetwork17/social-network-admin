@@ -18,7 +18,7 @@ export const usePostsPagination = () => {
     setPosts((prev) => [newPost, ...prev]);
   }, []);
 
-  const { data, loading, error, networkStatus, fetchMore } = useQuery<
+  const { data, loading, error, networkStatus, fetchMore, refetch } = useQuery<
     GetAllPostsQuery,
     GetAllPostsQueryVariables
   >(POSTS_ALL_QUERY, {
@@ -131,6 +131,7 @@ export const usePostsPagination = () => {
     hasMore,
     loadMore: { triggerRef: observerTarget },
     setSearchTerm,
-    addPost
+    addPost,
+    refetch
   };
 };
