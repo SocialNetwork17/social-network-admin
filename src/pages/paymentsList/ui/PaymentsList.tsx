@@ -5,42 +5,42 @@ import Pagination from "@/shared/ul/Pagination/Pagination";
 import {Icon} from "@/shared/ul/Icon/Icon";
 import {SearchInput} from "@/shared/ul/SearchInput/SearchInput";
 import {BaseOption} from "@/shared/ul/select-box/SelectBox";
-import { ThreeDotsMenu } from './ThreeDotsMenu/ThreeDotsMenu';
 import {useState} from "react";
 import {useQuery} from "@apollo/client/react";
-import {GET_USERS} from "@/pages/usersList/api/users";
 import {formatToDDMMYYYY} from "@/shared/utils/dateFormat";
-import {GetUsersQuery, GetUsersQueryVariables} from "@/pages/usersList/api/users.generated";
-import {SortDirection, UserBlockStatus} from '@/types';
+import {SortDirection} from '@/types';
+import {GET_PAYMENTS} from "@/pages/paymentsList/api/usersPayments";
+import {GetPaymentsQuery, GetPaymentsQueryVariables} from "@/pages/paymentsList/api/usersPayments.generated";
 
 type SortField = 'createdAt' | 'userName'
 
 export const PaymentsList = () => {
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(8);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
     const [searchTerm, setSearchTerm] = useState('');
     // сортировка
     const [sortBy, setSortBy] = useState<SortField>('createdAt')
     const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.Desc)
 
-    const { data, loading, error } = useQuery<GetUsersQuery, GetUsersQueryVariables>(
-        GET_USERS,
+    const { data, loading, error } = useQuery<GetPaymentsQuery, GetPaymentsQueryVariables>(
+        GET_PAYMENTS,
         {
             variables: {
-                pageNumber: currentPage,
                 pageSize: itemsPerPage,
+                pageNumber: currentPage,
                 sortBy,
                 sortDirection,
                 searchTerm: searchTerm || undefined,
-                statusFilter: UserBlockStatus.All,
             },
             fetchPolicy: 'cache-first',
         }
     );
 
+    console.log('data', data)
+
     if (loading) return <div>Loading...</div>;
 
-    const users = data?.getUsers?.users || [];
+    const users = data?.getPayments?.items || [];
 
 
     const handleSelect = (option: BaseOption) => {
@@ -56,7 +56,7 @@ export const PaymentsList = () => {
         setCurrentPage(1); // Сброс на первую страницу
     };
 
-    const pagination = data?.getUsers?.pagination;
+    const pagination = data?.getPayments;
 
     // Общее количество элементов для пагинации
     const totalItems = pagination?.totalCount || 0;
@@ -111,17 +111,11 @@ export const PaymentsList = () => {
                 {users?.map((user) => (
                     <li key={user.id} className={styles.userListElement}>
                         <div className={styles.userID}>
-                            <div className={styles.userIsBaned}>
-                                {user.userBan ? <Icon iconId={"icon-cancel"}/> : ''}
-                            </div>
                             {user.id}
                         </div>
-                        <div className={styles.profileLink}>{user.email}</div>
+                        <div className={styles.profileLink}>{user.paymentMethod}</div>
                         <div className={styles.username}>{user.userName}</div>
                         <div className={styles.dateAdded}>{formatToDDMMYYYY(user.createdAt)}</div>
-                        <div className={styles.threeDotsArea}>
-                            <ThreeDotsMenu userId={user.id} />
-                        </div>
                     </li>
                 ))}
             </ul>
