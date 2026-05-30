@@ -8,8 +8,6 @@ import {useClickOutside} from "@/pages/usersList/ul/ThreeDotsMenu/DropdownMenu/u
 import {useModal} from "@/widgets/modal/model/modal.context";
 import {banUserModalAC, deleteUserModalAC, unbanUserModalAC} from "@/widgets/modal/model/modal.types";
 import { useRouter } from 'next/navigation'
-import {useMutation} from "@apollo/client/react";
-import {BAN_USER, UNBAN_USER} from "@/pages/usersList/api/users";
 
 type ThreeDotsMenuProps = {
     userId: number
@@ -23,10 +21,6 @@ export const ThreeDotsMenu = ({ userId, isBanned = false, userName, onUserAction
     const router = useRouter()
 
     const {pushModal} = useModal()
-
-    // Мутации
-    const [banUser] = useMutation(BAN_USER);
-    const [unbanUser] = useMutation(UNBAN_USER);
 
     // Закрытие меню при клике снаружи
     const menuRef = useRef<HTMLDivElement>(null)
@@ -49,18 +43,8 @@ export const ThreeDotsMenu = ({ userId, isBanned = false, userName, onUserAction
                 </>
             ),
             userId: userId,
-            onConfirm: async (banReason: string) => {
-                try {
-                    await banUser({
-                        variables: {
-                            userId,
-                            banReason: banReason
-                        }
-                    });
-                    onUserAction?.();
-                } catch (error) {
-                    console.error('Error banning user:', error);
-                }
+            onConfirm: () => {
+                onUserAction?.();
             }
         }))
     }
@@ -75,15 +59,8 @@ export const ThreeDotsMenu = ({ userId, isBanned = false, userName, onUserAction
                 </>
             ),
             userId: userId,
-            onConfirm: async () => {
-                try {
-                    await unbanUser({
-                        variables: { userId }
-                    });
-                    onUserAction?.();
-                } catch (error) {
-                    console.error('Error unbanning user:', error);
-                }
+            onConfirm: () => {
+                onUserAction?.();
             }
         }))
     }

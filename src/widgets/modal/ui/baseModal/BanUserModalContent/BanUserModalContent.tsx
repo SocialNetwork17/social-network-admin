@@ -8,6 +8,7 @@ import { useModal } from "@/widgets/modal/model/modal.context";
 import { useSnackbar } from "@/widgets/snackbar/model/snackbar.context";
 import { useBanUser } from "@/pages/usersList/hooks/useBanUser";
 import { SelectBox, BaseOption } from "@/shared/ul/Select-box/SelectBox";
+import { Input } from "@/shared/ul/Input/Input";
 
 type Props = {
     modal: BanUserModalType
@@ -27,6 +28,8 @@ export const BanUserModalContent = ({ modal }: Props) => {
     const userId = modal.payload.userId;
     const { banUser, loading: banning } = useBanUser();
     const { successSnackbar, errorSnackbar } = useSnackbar();
+    const isAnotherReasonSelected = selectedReason?.id === 'another_reason';
+    const isBanDisabled = banning || !selectedReason || (isAnotherReasonSelected && !customReason.trim());
 
     const handleReasonSelect = (option: BaseOption) => {
         setSelectedReason(option);
@@ -79,6 +82,20 @@ export const BanUserModalContent = ({ modal }: Props) => {
                 />
             </div>
 
+            {isAnotherReasonSelected && (
+                <div className={styles.customReasonWrapper}>
+                    <Input
+                        type="text"
+                        required
+                        label="Reason"
+                        placeholder="Enter reason for ban"
+                        value={customReason}
+                        onChange={(event) => setCustomReason(event.currentTarget.value)}
+                        disabled={banning}
+                    />
+                </div>
+            )}
+
             <div className={styles.buttonsContainer}>
                 <Button
                     variant={'primary'}
@@ -93,7 +110,7 @@ export const BanUserModalContent = ({ modal }: Props) => {
                     variant={'outline'}
                     width={130}
                     height={36}
-                    disabled={banning || !selectedReason}
+                    disabled={isBanDisabled}
                     onClick={handleBanConfirm}
                 >
                     {banning ? 'Banning...' : 'YES'}

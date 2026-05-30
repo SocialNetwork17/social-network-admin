@@ -1,7 +1,5 @@
 import { useModal } from "@/widgets/modal/model/modal.context";
 import { IconButton } from "../../IconButton/IconButton";
-import { useMutation } from "@apollo/client/react";
-import { BAN_USER, UNBAN_USER } from "@/pages/usersList/api/users";
 import { banUserModalAC, unbanUserModalAC } from "@/widgets/modal/model/modal.types";
 
 type Props = {
@@ -16,10 +14,6 @@ export const BanButton = (props: Props) => {
 
   const { pushModal } = useModal();
 
-  // Мутации
-  const [banUser] = useMutation(BAN_USER);
-  const [unbanUser] = useMutation(UNBAN_USER);
-
   const handleBanUser = () => {
     pushModal(
       banUserModalAC({
@@ -31,18 +25,8 @@ export const BanButton = (props: Props) => {
           </>
         ),
         userId: userId,
-        onConfirm: async (banReason: string) => {
-          try {
-            await banUser({
-              variables: {
-                userId,
-                banReason: banReason,
-              },
-            });
-            onBanButtonAction?.();
-          } catch (error) {
-            console.error("Error banning user:", error);
-          }
+        onConfirm: () => {
+          onBanButtonAction?.();
         },
       }),
     );
@@ -59,15 +43,8 @@ export const BanButton = (props: Props) => {
           </>
         ),
         userId: userId,
-        onConfirm: async () => {
-          try {
-            await unbanUser({
-              variables: { userId },
-            });
-            onBanButtonAction?.();
-          } catch (error) {
-            console.error("Error unbanning user:", error);
-          }
+        onConfirm: () => {
+          onBanButtonAction?.();
         },
       }),
     );
