@@ -47,6 +47,7 @@ export const PaymentsList = () => {
   const [sortBy, setSortBy] = useState<SortField>('createdAt')
   const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.Desc)
 
+  // Дебаунс для поиска
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setSearchTerm(searchValue.trim())
