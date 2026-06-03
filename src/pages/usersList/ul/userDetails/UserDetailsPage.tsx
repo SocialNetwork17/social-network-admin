@@ -1,6 +1,6 @@
 'use client'
 
-import {useState} from 'react'
+import {useEffect, useMemo, useState} from 'react'
 import {useRouter} from 'next/navigation'
 import {useQuery} from '@apollo/client/react'
 import Pagination, {Option} from '@/shared/ul/Pagination/Pagination'
@@ -34,6 +34,8 @@ type UserDetailsPageProps = {
 
 type TabKey = 'uploadedPhotos' | 'payments' | 'followers' | 'following'
 
+const UPLOADED_PHOTOS_PER_PAGE = 10
+const USER_DETAILS_POLL_INTERVAL = 30000
 
 const pageSizeOptions: Option[] = [
     {id: '1', label: '10'},
@@ -50,11 +52,6 @@ const tabs: Array<{ key: TabKey; label: string }> = [
 
 const formatProfileLink = (userName: string) => `https://inctagram.work/profile/${userName}`
 const formatPaymentMethod = (value?: string | null) => value?.replaceAll('_', ' ') ?? '-'
-const getFullName = (item: { firstName?: string | null; lastName?: string | null }) => {
-    const fullName = [item.firstName, item.lastName].filter(Boolean).join(' ')
-    return fullName || '-'
-}
-
 export const UserDetailsPage = ({userId}: UserDetailsPageProps) => {
     const router = useRouter()
     const [activeTab, setActiveTab] = useState<TabKey>('uploadedPhotos')
@@ -69,6 +66,8 @@ export const UserDetailsPage = ({userId}: UserDetailsPageProps) => {
 
     const photosQuery = useQuery<GetUserPhotosQuery, GetUserPhotosQueryVariables>(GET_USER_PHOTOS, {
         variables: {userId},
+        pollInterval: USER_DETAILS_POLL_INTERVAL,
+        notifyOnNetworkStatusChange: true,
         skip: Number.isNaN(userId),
     })
 
@@ -80,6 +79,8 @@ export const UserDetailsPage = ({userId}: UserDetailsPageProps) => {
             sortBy: 'dateOfPayment',
             sortDirection: SortDirection.Desc,
         },
+        pollInterval: USER_DETAILS_POLL_INTERVAL,
+        notifyOnNetworkStatusChange: true,
         skip: Number.isNaN(userId) || activeTab !== 'payments', //активная вкладка не "payments"/ запрос на платежи выполняется только когда открыта вкладка payments
     })
 
@@ -91,6 +92,8 @@ export const UserDetailsPage = ({userId}: UserDetailsPageProps) => {
             sortBy: 'createdAt',
             sortDirection: SortDirection.Desc,
         },
+        pollInterval: USER_DETAILS_POLL_INTERVAL,
+        notifyOnNetworkStatusChange: true,
         skip: Number.isNaN(userId) || activeTab !== 'followers',
     })
 
@@ -102,34 +105,66 @@ export const UserDetailsPage = ({userId}: UserDetailsPageProps) => {
             sortBy: 'createdAt',
             sortDirection: SortDirection.Desc,
         },
+        pollInterval: USER_DETAILS_POLL_INTERVAL,
+        notifyOnNetworkStatusChange: true,
         skip: Number.isNaN(userId) || activeTab !== 'following',
     })
 
     const user = data?.getUser
-    const uploadedPhotos = photosQuery.data?.getPostsByUser.items?.filter(photo => photo?.url) ?? []
+    const photosData = photosQuery.data ?? photosQuery.previousData
+    const uploadedPhotos = useMemo(
+        () => photosData?.getPostsByUser.items?.filter(photo => photo?.url) ?? [],
+        [photosData?.getPostsByUser.items]
+    )
+    const uploadedPhotosPageItems = useMemo(() => {
+        const startIndex = (currentPage - 1) * UPLOADED_PHOTOS_PER_PAGE
+
+        return uploadedPhotos.slice(startIndex, startIndex + UPLOADED_PHOTOS_PER_PAGE)
+    }, [currentPage, uploadedPhotos])
+    const currentItemsPerPage = activeTab === 'uploadedPhotos' ? UPLOADED_PHOTOS_PER_PAGE : itemsPerPage
+    const paymentsData = paymentsQuery.data ?? paymentsQuery.previousData
+    const followersData = followersQuery.data ?? followersQuery.previousData
+    const followingData = followingQuery.data ?? followingQuery.previousData
+
+    useEffect(() => {
+        if (activeTab !== 'uploadedPhotos') {
+            return
+        }
+
+        const totalPages = Math.max(1, Math.ceil(uploadedPhotos.length / UPLOADED_PHOTOS_PER_PAGE))
+
+        if (currentPage > totalPages) {
+            setCurrentPage(totalPages)
+        }
+    }, [activeTab, currentPage, uploadedPhotos.length])
 
     //У нас есть несколько вкладок, и у каждой свой GraphQL-запрос со своими loading, error и totalCount.
     // Вместо того чтобы в JSX постоянно проверять, какая вкладка активна и к какому запросу обращаться, мы один раз выбираем нужные значения и сохраняем их в универсальные переменные.
     let currentLoading = false
     let currentError = null
     let currentTotalItems = 0
+    let currentTotalPages = 1
 
     if (activeTab === 'uploadedPhotos') {
-        currentLoading = photosQuery.loading
+        currentLoading = photosQuery.loading && !photosData
         currentError = photosQuery.error
-        currentTotalItems = photosQuery.data?.getPostsByUser.totalCount ?? 0
+        currentTotalItems = uploadedPhotos.length
+        currentTotalPages = Math.max(1, Math.ceil(uploadedPhotos.length / UPLOADED_PHOTOS_PER_PAGE))
     } else if (activeTab === 'payments') {
-        currentLoading = paymentsQuery.loading
+        currentLoading = paymentsQuery.loading && !paymentsData
         currentError = paymentsQuery.error
-        currentTotalItems = paymentsQuery.data?.getPaymentsByUser.totalCount ?? 0
+        currentTotalItems = paymentsData?.getPaymentsByUser.totalCount ?? 0
+        currentTotalPages = paymentsData?.getPaymentsByUser.pagesCount ?? 1
     } else if (activeTab === 'followers') {
-        currentLoading = followersQuery.loading
+        currentLoading = followersQuery.loading && !followersData
         currentError = followersQuery.error
-        currentTotalItems = followersQuery.data?.getFollowers?.totalCount ?? 0
+        currentTotalItems = followersData?.getFollowers?.totalCount ?? 0
+        currentTotalPages = followersData?.getFollowers?.pagesCount ?? 1
     } else {
-        currentLoading = followingQuery.loading
+        currentLoading = followingQuery.loading && !followingData
         currentError = followingQuery.error
-        currentTotalItems = followingQuery.data?.getFollowing?.totalCount ?? 0
+        currentTotalItems = followingData?.getFollowing?.totalCount ?? 0
+        currentTotalPages = followingData?.getFollowing?.pagesCount ?? 1
     }
 
     //Обработчик смены вкладки
@@ -222,16 +257,16 @@ export const UserDetailsPage = ({userId}: UserDetailsPageProps) => {
                                     <div className={s.sectionHeader}>
                                         <h2 className={s.sectionTitle}>Uploaded photos</h2>
                                         <span className={s.sectionCount}>
-                                            {photosQuery.data?.getPostsByUser.totalCount ?? 0}
+                                            {uploadedPhotos.length}
                                         </span>
                                     </div>
                                     <div className={s.photosGrid}>
-                                        {uploadedPhotos.map((photo, index) => (
+                                        {uploadedPhotosPageItems.map((photo, index) => (
                                             <div key={photo.id ?? index} className={s.photoCard}>
                                                 <img
                                                     className={s.photo}
                                                     src={photo.url ?? ''}
-                                                    alt={`${user.userName} uploaded photo ${index + 1}`}
+                                                    alt={`${user.userName} uploaded photo ${(currentPage - 1) * UPLOADED_PHOTOS_PER_PAGE + index + 1}`}
                                                 />
                                             </div>
                                         ))}
@@ -242,7 +277,7 @@ export const UserDetailsPage = ({userId}: UserDetailsPageProps) => {
                             )
                         ) : null}
                         {activeTab === 'payments' ? (
-                            (paymentsQuery.data?.getPaymentsByUser.items ?? []).length ? (
+                            (paymentsData?.getPaymentsByUser.items ?? []).length ? (
                                 <div className={s.tableWrapper}>
                                     <div className={`${s.tableRow} ${s.tableHead} ${s.paymentsTable}`}>
                                         <div>Date of Payment</div>
@@ -250,16 +285,14 @@ export const UserDetailsPage = ({userId}: UserDetailsPageProps) => {
                                         <div>Amount</div>
                                         <div>Type</div>
                                         <div>Method</div>
-                                        <div>Status</div>
                                     </div>
-                                    {(paymentsQuery.data?.getPaymentsByUser.items ?? []).map(item => (
+                                    {(paymentsData?.getPaymentsByUser.items ?? []).map(item => (
                                         <div key={item.id} className={`${s.tableRow} ${s.paymentsTable}`}>
                                             <div>{formatToDDMMYYYY(item.dateOfPayment ?? undefined) || '-'}</div>
                                             <div>{formatToDDMMYYYY(item.endDate ?? undefined) || '-'}</div>
                                             <div>${item.price}</div>
                                             <div>{item.type}</div>
                                             <div>{formatPaymentMethod(item.paymentType)}</div>
-                                            <div>{item.status}</div>
                                         </div>
                                     ))}
                                 </div>
@@ -268,19 +301,19 @@ export const UserDetailsPage = ({userId}: UserDetailsPageProps) => {
                             )
                         ) : null}
                         {activeTab === 'followers' ? (
-                            (followersQuery.data?.getFollowers?.items ?? []).length ? (
+                            (followersData?.getFollowers?.items ?? []).length ? (
                                 <div className={s.tableWrapper}>
                                     <div className={`${s.tableRow} ${s.tableHead} ${s.followsTable}`}>
                                         <div>ID</div>
                                         <div>Username</div>
-                                        <div>Full name</div>
+                                        <div>Profile link</div>
                                         <div>Followed at</div>
                                     </div>
-                                    {(followersQuery.data?.getFollowers?.items ?? []).map(item => (
+                                    {(followersData?.getFollowers?.items ?? []).map(item => (
                                         <div key={`${item.id}-${item.userId}`} className={`${s.tableRow} ${s.followsTable}`}>
                                             <div>{item.userId}</div>
                                             <div>{item.userName || '-'}</div>
-                                            <div>{getFullName(item)}</div>
+                                            <div>{item.userName ? formatProfileLink(item.userName) : '-'}</div>
                                             <div>{formatToDDMMYYYY(item.createdAt)}</div>
                                         </div>
                                     ))}
@@ -290,19 +323,19 @@ export const UserDetailsPage = ({userId}: UserDetailsPageProps) => {
                             )
                         ) : null}
                         {activeTab === 'following' ? (
-                            (followingQuery.data?.getFollowing?.items ?? []).length ? (
+                            (followingData?.getFollowing?.items ?? []).length ? (
                                 <div className={s.tableWrapper}>
                                     <div className={`${s.tableRow} ${s.tableHead} ${s.followsTable}`}>
                                         <div>ID</div>
                                         <div>Username</div>
-                                        <div>Full name</div>
+                                        <div>Profile link</div>
                                         <div>Followed at</div>
                                     </div>
-                                    {(followingQuery.data?.getFollowing?.items ?? []).map(item => (
+                                    {(followingData?.getFollowing?.items ?? []).map(item => (
                                         <div key={`${item.id}-${item.userId}`} className={`${s.tableRow} ${s.followsTable}`}>
                                             <div>{item.userId}</div>
                                             <div>{item.userName || '-'}</div>
-                                            <div>{getFullName(item)}</div>
+                                            <div>{item.userName ? formatProfileLink(item.userName) : '-'}</div>
                                             <div>{formatToDDMMYYYY(item.createdAt)}</div>
                                         </div>
                                     ))}
@@ -315,10 +348,12 @@ export const UserDetailsPage = ({userId}: UserDetailsPageProps) => {
                         <div className={s.pagination}>
                             <Pagination
                                 totalItems={currentTotalItems}
-                                itemsPerPage={itemsPerPage}
+                                itemsPerPage={currentItemsPerPage}
                                 currentPage={currentPage}
+                                totalPages={currentTotalPages}
                                 onPageChange={setCurrentPage}
-                                onSelectChange={handlePageSizeChange}
+                                onSelectChange={activeTab === 'uploadedPhotos' ? undefined : handlePageSizeChange}
+                                disabled={activeTab === 'uploadedPhotos'}
                             />
                         </div>
                     </>

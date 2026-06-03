@@ -56,6 +56,7 @@ const Pagination = ({
     const totalPages = externalTotalPages !== undefined
         ? externalTotalPages
         : Math.ceil(totalItems / itemsPerPage)
+    const selectedOption = options.find(option => Number(option.label) === itemsPerPage) ?? options[0]
 
     const displayPages = useMemo(() => {
         if (totalPages <= maxVisiblePages) {
@@ -173,7 +174,7 @@ const Pagination = ({
                 <SelectBox
                     options={options}
                     onChange={handleSelect}
-                    defaultValue={options[0]}
+                    defaultValue={selectedOption}
                     disabled={disabled}
                     styleContainer={{ fontSize: '14px', fontWeight: '400', height: '100%' }}
                     styleBox={{ padding: '0 1px 0 5px', gap: 0, height: '100%' }}

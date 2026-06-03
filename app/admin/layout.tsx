@@ -5,22 +5,22 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/shared/auth/authContext'
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { isLoggedIn } = useAuth()
+  const { isLoggedIn, isAuthResolved } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
   const isLoginPage = pathname === '/admin/login'
 
   useEffect(() => {
-    if (!isLoggedIn && !isLoginPage) {
+    if (isAuthResolved && !isLoggedIn && !isLoginPage) {
       router.replace('/admin/login')
     }
-  }, [isLoggedIn, isLoginPage, router])
+  }, [isAuthResolved, isLoggedIn, isLoginPage, router])
 
   if (isLoginPage) {
     return <>{children}</>
   }
 
-  if (!isLoggedIn) {
+  if (!isAuthResolved || !isLoggedIn) {
     return (
       <div
         style={{
